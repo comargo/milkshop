@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Покупатели
+{% endblock %}
+
+{% block content %}
+<div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Имя</th>
+            <th scope="col">Баланс</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for customer in customer_list %}
+        <tr>
+            <td>
+                <a href="{{ customer.get_absolute_url }}">{{ customer.name }}</a>
+            </td>
+            <td>{{ customer.balance }}.00 &#8381; <a href="{% url 'customers:debit-add' customer_pk=customer.pk %}"><i
+                    class="fas fa-coins">&#xf51e;</i></a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="2"><a href="{% url 'customers:create' %}"><i class="fas fa-plus-circle" aria-label="Добавить">&#xf055;</i>
+                Новый пользователь</a></td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+{% endblock %}

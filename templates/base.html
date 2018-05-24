@@ -1,0 +1,35 @@
+{% extends "bootstrap4/bootstrap4.html" %}
+{% block bootstrap4_extra_head %}
+    <title>{{project.title}} - {% block title %}Главная{% endblock %}</title>
+{% endblock %}
+{% block bootstrap4_extra_script %}
+{{ block.super }}
+<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/all.js"
+        integrity="sha384-xymdQtn1n3lH2wcu0qhcdaOpQwyoarkgLVxC/wZ5q7h9gHtxICrpcaSUfygqZGOe"
+        crossorigin="anonymous"></script>
+{% endblock %}
+{% block bootstrap4_before_content %}
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {% for title, url in project.nav.items %}
+            {% url url as url_path %}
+            <li class="nav-item"><a class="nav-link {% if url_path == request.path %}active{% endif %}"
+                                    href="{{ url_path }}">{{ title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</nav>
+{% endblock %}
+
+{% block bootstrap4_content %}
+<div class="container-fluid">
+    {% block content %}
+        CONTENT
+    {% endblock %}
+</div>
+{% endblock %}

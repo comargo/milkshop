@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+Покупатели - внесение денег
+{% endblock %}
+
+{% block content %}
+<h3>{{ customer.name }}</h3>
+<p>Текущий баланс: <span>{{ customer.balance }}.00 &#8381;</span></p>
+<form method="post" role="form">
+    {% csrf_token %}
+    {% bootstrap_form form layout='horizontal'%}
+    {% buttons submit='OK' reset='Cancel'%}
+    {% endbuttons %}
+</form>
+{% endblock %}

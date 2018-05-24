@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+Продукция
+{% endblock %}
+
+{% block content %}
+<form method="post" role="form">
+    {% csrf_token %}
+    {% bootstrap_form form layout='horizontal'%}
+    {% buttons submit='OK' reset='Cancel'%}
+    {% endbuttons %}
+</form>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Продукты
+{% endblock %}
+
+{% block content %}
+<div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Название</th>
+            <th scope="col">Цена</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for producttype in producttype_list %}
+        <tr class="producttype">
+            <th scope="colgroup" colspan="3">{{ producttype }} <a href="{{ producttype.get_edit_url }}"><i class="fas fa-edit">&#xf044;</i></a></th>
+        </tr>
+        {% for product in producttype.products.all %}
+        <tr class="product">
+            <td>{{ product.name }}</td>
+            <td>{{ product.price }}.00 &#8381;</td>
+            <td><a href="{{ product.get_edit_url }}"><i class="fas fa-edit">&#xf044;</i></a></td>
+        </tr>
+        {% endfor %}
+        <tr class="product">
+            <td colspan="3"><a href="{% url 'products:product-add' producttype_pk=producttype.pk %}"><i class="fas fa-plus-circle"
+                                                                     aria-label="Добавить продукцию">&#xf055;</i>
+                Добавить продукцию</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr class="producttype">
+            <td colspan="3"><a href="{% url 'products:producttype-add' %}"><i class="fas fa-plus-circle"
+                                                                     aria-label="Добавить класс продукции">&#xf055;</i>
+                Добавить класс продукции</a></td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+{% endblock %}

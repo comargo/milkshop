@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+Продукция - {{ product }}
+{% endblock %}
+
+{% block content %}
+<h1>{{ product }}</h1>
+<form method="post" role="form">
+    {% csrf_token %}
+    {% bootstrap_form form layout='horizontal'%}
+    {% buttons submit='OK' reset='Cancel'%}
+    {% endbuttons %}
+</form>
+{% endblock %}

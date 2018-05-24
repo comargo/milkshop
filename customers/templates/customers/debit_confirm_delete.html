@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+Покупатели - удаление взноса
+{% endblock %}
+
+{% block content %}
+<h3>{{ customer.name }}</h3>
+<p>Текущий баланс: <span>{{ customer.balance }}.00 &#8381;</span></p>
+<form method="post" role="form">
+    {% csrf_token %}
+    <p>Вы уверены что хотите удалить приход от <strong>{{ customer.name }}</strong> на сумму
+        <strong>{{ debit.amount }}.00 &#8381; </strong> от <strong>{{ debit.date }}</strong></p>
+    {% buttons submit='OK' reset='Cancel'%}
+    {% endbuttons %}
+</form>
+{% endblock %}

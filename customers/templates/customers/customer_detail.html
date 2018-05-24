@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ customer }} <a href="{{ customer.get_edit_url }}"><i class="fas fa-edit">&#xf044;</i></a></h1>
+<div>Баланс: <span class="balance">{{ customer.balance }}.00 &#8381;</span> <a
+        href="{% url 'customers:debit-add' customer_pk=customer.pk %}"><i
+        class="fas fa-coins">&#xf51e;</i></a></div>
+<table>
+    <tr>
+        <th>Дата</th>
+        <th>Взнос</th>
+        <th></th>
+    </tr>
+    {% for debit in customer.debits.all %}
+    <tr>
+        <td>{{ debit.date }}</td>
+        <td>{{ debit.amount }}.00 &#8381;</td>
+        <td>
+            <a href="{{ debit.get_edit_url }}"><i class="fas fa-edit">&#xf044;</i></a>
+            <a href="{{ debit.get_delete_url }}"><i class="fas fa-minus">&#xf068;</i></a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
