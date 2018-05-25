@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'top-secret-key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('MILKSHOP_DEBUG', 'False').lower() in ['1', 'true', 't', 'yes', 'y']
 
 ALLOWED_HOSTS = []
 
