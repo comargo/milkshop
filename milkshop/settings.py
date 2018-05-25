@@ -11,15 +11,17 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#+b+-k1x-b!t7+bd#)f^ww9v*15)-xja6mq6qt^rpy_qbmt$#)'
+SECRET_KEY = 'top-secret-key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -132,3 +134,5 @@ PROJECT = {
         'Заказ': 'orders:index',
     }
 }
+
+django_heroku.settings(locals())
