@@ -19,15 +19,23 @@
             <td>
                 <a href="{{ customer.get_absolute_url }}">{{ customer.name }}</a>
             </td>
-            <td>{{ customer.balance }}.00 &#8381; <a href="{% url 'customers:debit-add' customer_pk=customer.pk %}"><i
-                    class="fas fa-coins">&#xf51e;</i></a></td>
+            <td>
+                {{ customer.balance }}.00 &#8381;
+                <a href="{% url 'customers:debit-add' customer_pk=customer.pk %}" title="Взнос">
+                    <i class="fas fa-coins">&#xf51e;</i>
+                </a>
+            </td>
         </tr>
         {% endfor %}
         </tbody>
         <tfoot>
         <tr>
-            <td colspan="2"><a href="{% url 'customers:create' %}"><i class="fas fa-plus-circle" aria-label="Добавить">&#xf055;</i>
-                Новый пользователь</a></td>
+            <td colspan="2">
+                <a href="{% url 'customers:create' %}" title="Добавить">
+                    <i class="fas fa-plus-circle" aria-label="Добавить">&#xf055;</i>
+                    Новый пользователь
+                </a>
+            </td>
         </tr>
         </tfoot>
     </table>

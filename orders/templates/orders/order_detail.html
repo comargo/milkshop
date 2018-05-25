@@ -1,30 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>{{ order }} <a href="{{ order.get_edit_url }}"><i class="fas fa-edit">&#xf044;</i></a> </h2>
-<hr />
-<div class="table-responsive"><table class="table table-sm table-bordered">
-    <thead>
-    <tr>
-        {% for header in order_table_header %}
-        <th {% if not forloop.first %}class="text-center"{% endif %}>{{header}}</th>
-        {% endfor %}
-    </tr>
-    </thead>
-    <tbody>
-    {% for customer_order in order_table %}
+<h2>{{ order }}
+    <a href="{{ order.get_edit_url }}" title="Редактировать"><i class="fas fa-edit">&#xf044;</i></a>
+</h2>
+<hr/>
+<div class="table-responsive">
+    <table class="table table-sm table-bordered">
+        <thead>
+        <tr>
+            {% for header in order_table_header %}
+            <th {% if not forloop.first %}class="text-center" {% endif %}>{{header}}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for customer_order in order_table %}
         <tr>
             <th>{{customer_order.customer}}</th>
             {% for product in customer_order.products %}
             <td class="text-center">{{product}}</td>
             {% endfor %}
         </tr>
-    {% endfor %}
-    </tbody>
-    <tfoot>
-        {% for footer in order_table_footer %}
-        <th {% if not forloop.first %}class="text-center"{% endif %}>{{footer}}</th>
         {% endfor %}
-    </tfoot>
-</table>
+        </tbody>
+        <tfoot>
+        {% for footer in order_table_footer %}
+        <th {% if not forloop.first %}class="text-center" {% endif %}>{{footer}}</th>
+        {% endfor %}
+        </tfoot>
+    </table>
 </div>{% endblock %}
