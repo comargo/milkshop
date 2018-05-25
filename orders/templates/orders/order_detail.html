@@ -3,6 +3,8 @@
 {% block content %}
 <h2>{{ order }}
     <a href="{{ order.get_edit_url }}" title="Редактировать"><i class="fas fa-edit">&#xf044;</i></a>
+    <a href="{{ order.get_confirm_url }}" title="Подтвердить"><i class="far fa-check-square">&#xf14a;</i></a>
+    <a href="{% url 'orders:create' %}" title="Новый заказ"><i class="fas fa-plus">&#xf067;</i></a>
 </h2>
 <hr/>
 <div class="table-responsive">

@@ -31,6 +31,7 @@ class OrderForm(forms.ModelForm):
         widgets = {'date': forms.DateInput(attrs={'type': 'date'})}
 
     formset = None
+    amount_field = 'amount'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -46,10 +47,10 @@ class OrderForm(forms.ModelForm):
     def save(self, commit=True):
         self.instance = super().save(commit)
         for subform_data in (x for x in self.formset.cleaned_data if len(x) > 0):
-            self.save_subform(subform_data)
+            self.save_subform(subform_data, self.amount_field)
         return self.instance
 
-    def save_subform(self, data):
+    def save_subform(self, data, amount_field = 'amount'):
         customerOrder, created = self.instance.customers.update_or_create(customer=data['customer'])
         customerOrder.save()
         pattern = r'product-(?P<type>\d+)-(?P<product>\d+)'
@@ -60,12 +61,12 @@ class OrderForm(forms.ModelForm):
             product = products.models.Product.objects.get(pk=match['product'], product_type=match['type'])
             if value and value > 0:
                 product_order, created = customerOrder.product_orders.update_or_create(product=product,
-                                                                                       defaults={'amount': value})
+                                                                                       defaults={amount_field: value})
                 product_order.save()
             else:
                 try:
                     product_order = customerOrder.product_orders.get(product=product)
-                    product_order.amount = 0
+                    setattr(product_order, amount_field, 0)
                     product_order.save()
                 except customerOrder.product_orders.model.DoesNotExist:
                     pass
@@ -83,3 +84,9 @@ class OrderForm(forms.ModelForm):
                 initial.append(subform_initial)
             return initial
         return None
+
+
+class OrderConfirmForm(OrderForm):
+    class Meta(OrderForm.Meta):
+        widgets = {'date': forms.DateInput(attrs={'type': 'date', 'readonly': True})}
+    amount_field = 'confirmed_amount'

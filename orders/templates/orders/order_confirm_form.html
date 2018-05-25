@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<form method="post" role="form">
+    {% csrf_token %}
+    {% bootstrap_form form layout='horizontal'%}
+    <hr/>
+    <table class="table">
+        <thead>
+        <tr>
+        {% for field in form.formset.empty_form %}
+            <th {% if not forloop.first %}class="text-center"{% endif %}>{% bootstrap_label field.label %}</th>
+        {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for subform in form.formset %}
+        <tr>
+            {% for field in subform %}
+            <td>{% bootstrap_field field show_label=False %}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {{ form.formset.management_form }}
+    {% buttons submit='OK' reset='Cancel'%}
+    {% endbuttons %}
+</form>
+{% endblock %}

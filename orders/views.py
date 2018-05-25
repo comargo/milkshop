@@ -65,3 +65,8 @@ class OrderCreateView(OrderMixin, CreateView):
 
 class OrderEditView(OrderMixin, UpdateView):
     form_class = forms.OrderForm
+
+
+class OrderConfirmView(OrderMixin, UpdateView):
+    form_class = forms.OrderConfirmForm
+    template_name_suffix = '_confirm_form'

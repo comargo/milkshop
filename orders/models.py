@@ -15,6 +15,9 @@ class Order(helpers_models.Model):
             cost += customer.order_cost()
         return cost
 
+    def get_confirm_url(self):
+        return self.get_absolute_url('confirm')
+
     class Meta:
         get_latest_by = 'date'
 

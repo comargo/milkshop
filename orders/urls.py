@@ -8,7 +8,8 @@ app_name='orders'
 
 order_urlpatterns = [
     path('', orders.views.OrderView.as_view(), name='order'),
-    path('edit', orders.views.OrderEditView.as_view(), name='order-edit')
+    path('edit', orders.views.OrderEditView.as_view(), name='order-edit'),
+    path('confirm', orders.views.OrderConfirmView.as_view(), name='order-confirm')
 ]
 
 
