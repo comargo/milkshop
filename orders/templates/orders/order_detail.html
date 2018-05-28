@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load helpers %}
 
 {% block content %}
 <h2>{{ order }}
@@ -21,22 +22,22 @@
         <tr>
             {% for header in order_table_header %}
             {% if forloop.first %}
-            <th></th>
+            <th>{{ customer_order | key:header.0 }}</th>
             {% else %}
+            <td class="text-center">{{ customer_order | key:header.0 | key:0 | default:"-"}}</td>
             {% endif %}
-            {% endfor %}
-
-            <th>{{customer_order.customer}}</th>
-            {% for product in customer_order.products %}
-            <td class="text-center">{{product}}</td>
             {% endfor %}
         </tr>
         {% endfor %}
         </tbody>
         <tfoot>
-        {% for footer in order_table_footer %}
-        <th {% if not forloop.first %}class="text-center" {% endif %}>{{footer}}</th>
-        {% endfor %}
+            {% for header in order_table_header %}
+            {% if forloop.first %}
+            <th>{{ order_table_footer | key:header.0 }}</th>
+            {% else %}
+            <th class="text-center">{{ order_table_footer | key:header.0 | key:0 | default:"-"}}</th>
+            {% endif %}
+            {% endfor %}
         </tfoot>
     </table>
 </div>{% endblock %}
