@@ -12,13 +12,20 @@
         <thead>
         <tr>
             {% for header in order_table_header %}
-            <th {% if not forloop.first %}class="text-center" {% endif %}>{{header}}</th>
+            <th {% if not forloop.first %}class="text-center" {% endif %}>{{header.1}}</th>
             {% endfor %}
         </tr>
         </thead>
         <tbody>
         {% for customer_order in order_table %}
         <tr>
+            {% for header in order_table_header %}
+            {% if forloop.first %}
+            <th></th>
+            {% else %}
+            {% endif %}
+            {% endfor %}
+
             <th>{{customer_order.customer}}</th>
             {% for product in customer_order.products %}
             <td class="text-center">{{product}}</td>

@@ -9,15 +9,20 @@
     <table class="table">
         <thead>
         <tr>
-        {% for field in form.formset.empty_form %}
-            <th {% if not forloop.first %}class="text-center"{% endif %}>{% bootstrap_label field.label %}</th>
+            <th>{% bootstrap_label form.formset.empty_form.customer.label %}</th>
+        {% for field in form.formset.empty_form.visible_fields %}
+            <th class="text-center">{% bootstrap_label field.label %}</th>
         {% endfor %}
         </tr>
         </thead>
         <tbody>
         {% for subform in form.formset %}
         <tr>
-            {% for field in subform %}
+            <th>
+                {{subform.instance.customer}}
+                {% for field in subform.hidden_fields %}{{field}}{%endfor%}
+            </th>
+            {% for field in subform.visible_fields %}
             <td>{% bootstrap_field field show_label=False %}</td>
             {% endfor %}
         </tr>

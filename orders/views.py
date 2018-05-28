@@ -18,25 +18,28 @@ class OrderMixin:
 class OrderView(OrderMixin, DetailView):
     def get_context_data(self, **kwargs):
         order = self.object
-        order_table_header = ['Заказчик', ]
-        order_table_header.extend((str(product) for product in products.models.Product.objects.all()))
-        order_sum = {product.pk: 0 for product in products.models.Product.objects.all()}
+        order_table_header = [('customer', 'Заказчик')]
+        order_table_header.extend(
+            [(str(product.pk), str(product)) for product in products.models.Product.objects.all()]
+        )
 
         order_table = []
         for customer in order.customers.all():
-            customer_order = {'customer': str(customer.customer), 'products': []}
+            customer_order = {'customer': str(customer.customer)}
             for product in products.models.Product.objects.all():
                 try:
-                    amount = customer.product_orders.get(product=product).amount
-                    order_sum[product.pk]+=amount
-                    if amount == 0:
-                        amount = '-'
-                    customer_order['products'].append(amount)
+                    product_order = customer.product_orders.get(product=product)
+                    amount = (product_order.amount or None, product_order.confirmed_amount or None)
                 except customer.product_orders.model.DoesNotExist:
-                    customer_order['products'].append('-')
+                    amount = (None, None)
+                customer_order[str(product.pk)] = amount
             order_table.append(customer_order)
-        order_table_footer = ['Итого',]
-        order_table_footer.extend(order_sum[product.pk] for product in products.models.Product.objects.all())
+        order_table_footer = {'customer': 'Итого'}
+        for product in products.models.Product.objects.all():
+            order_table_footer[str(product.pk)] = (
+                sum(customer_order[str(product.pk)][0] or 0 for customer_order in order_table),
+                sum(customer_order[str(product.pk)][1] or 0 for customer_order in order_table),
+            )
 
         context = {
             'order_table_header': order_table_header,

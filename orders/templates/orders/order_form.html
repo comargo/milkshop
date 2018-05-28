@@ -9,7 +9,7 @@
     <table class="table">
         <thead>
         <tr>
-        {% for field in form.formset.empty_form %}
+        {% for field in form.formset.empty_form.visible_fields %}
             <th {% if not forloop.first %}class="text-center"{% endif %}>{% bootstrap_label field.label %}</th>
         {% endfor %}
         </tr>
@@ -17,8 +17,15 @@
         <tbody>
         {% for subform in form.formset %}
         <tr>
-            {% for field in subform %}
-            <td>{% bootstrap_field field show_label=False %}</td>
+            {% for field in subform.visible_fields %}
+            <td>
+                {% bootstrap_field field show_label=False %}
+            {% if forloop.first %}
+            {% for hidden_field in subform.hidden_fields %}
+                {% bootstrap_field hidden_field %}
+            {% endfor %}
+            {% endif %}
+            </td>
             {% endfor %}
         </tr>
         {% endfor %}
