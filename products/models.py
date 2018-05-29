@@ -44,6 +44,9 @@ class Product(helpers_models.Model):
         else:
             return super().get_absolute_url(kind)
 
+    def get_field_name(self):
+        return f'product-{self.product_type.pk}-{self.pk}'
+
 
 class Price(helpers_models.Model):
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE, verbose_name="Продукция", related_name="prices")

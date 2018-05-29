@@ -18,7 +18,7 @@ class CustomerOrderForm(forms.ModelForm):
         order_fields = {}
         for product_type in products.models.ProductType.objects.all():
             for product in product_type.products.all():
-                order_fields[f'product-{product_type.pk}-{product.pk}'] = forms.IntegerField(
+                order_fields[product.get_field_name()] = forms.IntegerField(
                     label=str(product),
                     required=False)
         self.fields.update(order_fields)
@@ -28,14 +28,12 @@ class CustomerOrderForm(forms.ModelForm):
     def get_initial(self):
         if self.instance:
             initial = {}
-            for productOrder in self.instance.product_orders.all():
-                product_key = f'product-{productOrder.product.product_type.pk}-{productOrder.product.pk}'
-                initial[product_key] = getattr(productOrder, self.amount_field)
+            for product_order in self.instance.product_orders.all():
+                initial[product_order.product.get_field_name()] = getattr(product_order, self.amount_field)
             return initial
         return None
 
-    def save(self, commit=True):
-        instance = super().save(commit)
+    def _save_m2m(self):
         pattern = r'product-(?P<type>\d+)-(?P<product>\d+)'
         for key, value in self.cleaned_data.items():
             match = re.match(pattern, key)
@@ -43,16 +41,18 @@ class CustomerOrderForm(forms.ModelForm):
                 continue
             product = products.models.Product.objects.get(pk=match['product'], product_type=match['type'])
             if value and value > 0:
-                product_order, created = instance.product_orders.update_or_create(product=product,
+                product_order, created = self.instance.product_orders.update_or_create(product=product,
                                                                                   defaults={self.amount_field: value})
                 product_order.save()
             else:
                 try:
-                    product_order = instance.product_orders.get(product=product)
+                    product_order = self.instance.product_orders.get(product=product)
                     setattr(product_order, self.amount_field, 0)
                     product_order.save()
-                except instance.product_orders.model.DoesNotExist:
+                except self.instance.product_orders.model.DoesNotExist:
                     pass
+        return self.instance
+
 
 
 OrderFormSet = forms.inlineformset_factory(orders.models.Order, orders.models.CustomerOrder, form=CustomerOrderForm,
@@ -68,22 +68,10 @@ class CustomerOrderConfirmForm(CustomerOrderForm):
     def get_initial(self):
         if self.instance:
             initial = {}
-            for productOrder in self.instance.product_orders.all():
-                product_key = f'product-{productOrder.product.product_type.pk}-{productOrder.product.pk}'
-                initial[product_key] = productOrder.confirmed_amount or productOrder.amount
+            for product_order in self.instance.product_orders.all():
+                initial[product_order.product.get_field_name()] = product_order.confirmed_amount or None
             return initial
         return None
-
-    def has_changed(self):
-        if super().has_changed():
-            return True
-        if self.instance:
-            initial = {}
-            for productOrder in self.instance.product_orders.all():
-                product_key = f'product-{productOrder.product.product_type.pk}-{productOrder.product.pk}'
-                if productOrder.confirmed_amount != self.cleaned_data[product_key]:
-                    return True
-            return True
 
 
 OrderConfirmFormSet = forms.inlineformset_factory(orders.models.Order, orders.models.CustomerOrder,
@@ -99,9 +87,9 @@ class OrderForm(forms.ModelForm):
     formset = None
     formset_class = OrderFormSet
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.formset = self.get_formset_class()(**kwargs)
+    def __init__(self, initial=None, **kwargs):
+        super().__init__(initial=initial, **kwargs)
+        self.formset = self.get_formset_class()(initial=(initial or {}).get('order', None), **kwargs)
 
     def get_formset_class(self):
         return self.formset_class
@@ -110,7 +98,7 @@ class OrderForm(forms.ModelForm):
         return super().is_valid() and self.formset.is_valid()
 
     def save(self, commit=True):
-        self.instance = super().save(commit)
+        self.formset.instance = super().save(commit)
         self.formset.save(commit)
         return self.instance
 

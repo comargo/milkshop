@@ -2,7 +2,7 @@
 {% load bootstrap4 %}
 
 {% block content %}
-<form method="post" role="form">
+<form method="post" role="form" id="mainForm">
     {% csrf_token %}
     {% bootstrap_form form layout='horizontal'%}
     <hr/>
@@ -35,4 +35,10 @@
     {% buttons submit='OK' reset='Cancel'%}
     {% endbuttons %}
 </form>
+{{ post_initial | json_script:"post-initial" | force_escape}}
 {% endblock %}
+{% block bootstrap4_extra_script %}
+{{ block.super }}
+{% include 'orders/post-initial.html' with form_name='mainForm' %}
+{% endblock %}
+

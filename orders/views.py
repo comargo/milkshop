@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import gettext as _
@@ -67,6 +69,24 @@ class LastOrderView(OrderView):
 class OrderCreateView(OrderMixin, CreateView):
     form_class = forms.OrderForm
 
+    def get_context_data(self, **kwargs):
+        latest_order = self.get_queryset().latest()
+        orders = []
+        for customer in latest_order.customers.all():
+            order = {'customer': customer.customer.id}
+            for product_order in customer.product_orders.all():
+                if product_order.amount:
+                    order[product_order.product.get_field_name()] = product_order.amount
+            orders.append(order)
+
+        form = kwargs.get('form', self.get_form())
+        form.formset.extra = len(orders) + 1
+        post_initial = {form.add_prefix('date'): latest_order.date + datetime.timedelta(days=7)}
+        for i in range(len(orders)):
+            for field, value in orders[i].items():
+                post_initial[form.formset[i].add_prefix(field)] = value
+        return super().get_context_data(post_initial=post_initial, form=form, **kwargs)
+
 
 class OrderEditView(OrderMixin, UpdateView):
     form_class = forms.OrderForm
@@ -75,3 +95,16 @@ class OrderEditView(OrderMixin, UpdateView):
 class OrderConfirmView(OrderMixin, UpdateView):
     form_class = forms.OrderConfirmForm
     template_name_suffix = '_confirm_form'
+
+    def get_context_data(self, **kwargs):
+        form = kwargs.get('form', self.get_form())
+        post_initial = {}
+        #        for fields in form.visible_fields():
+        #            post_initial[]
+        for subform in form.formset.forms:
+            customer = self.object.customers.get(pk=subform['customer'].value())
+            for product_order in customer.product_orders.all():
+                if product_order.amount:
+                    post_initial[subform.add_prefix(product_order.product.get_field_name())] = \
+                        product_order.confirmed_amount or product_order.amount
+        return super().get_context_data(post_initial=post_initial, form=form, **kwargs)
