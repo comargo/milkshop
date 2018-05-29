@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 import customers.forms
 import customers.models
 from helpers.views import CreateWithParentView
+import orders.models
 
 
 class CustomerMixin:
@@ -58,6 +59,13 @@ class DebitAddView(DebitMixin, CreateWithParentView):
         'amount': django.forms.NumberInput(attrs={'addon_after': '.00 &#8381;'})
     }
     parent_field = 'customer'
+
+    def get_initial(self):
+        initial = super().get_initial()
+        balance = self.customer.balance()
+        if balance < 0:
+            initial.update({'amount': -balance})
+        return initial
 
 
 class DebitEditView(DebitMixin, UpdateView):

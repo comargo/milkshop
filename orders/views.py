@@ -29,23 +29,25 @@ class OrderView(OrderMixin, DetailView):
             for product in products.models.Product.objects.all():
                 try:
                     product_order = customer.product_orders.get(product=product)
-                    amount = (product_order.amount or None, product_order.confirmed_amount or None)
+                    amount = {'amount': product_order.amount or None,
+                              'confirmed': product_order.confirmed_amount or None}
                 except customer.product_orders.model.DoesNotExist:
-                    amount = (None, None)
+                    amount = {'amount': None,
+                              'confirmed': None}
                 customer_order[str(product.pk)] = amount
             order_table.append(customer_order)
         order_table_footer = {'customer': 'Итого'}
         for product in products.models.Product.objects.all():
-            order_table_footer[str(product.pk)] = (
-                sum(customer_order[str(product.pk)][0] or 0 for customer_order in order_table),
-                sum(customer_order[str(product.pk)][1] or 0 for customer_order in order_table),
-            )
+            order_table_footer[str(product.pk)] = {
+                'amount': sum(customer_order[str(product.pk)]['amount'] or 0 for customer_order in order_table),
+                'confirmed': sum(customer_order[str(product.pk)]['confirmed'] or 0 for customer_order in order_table),
+            }
 
-        context = {
-            'order_table_header': order_table_header,
-            'order_table': order_table,
-            'order_table_footer': order_table_footer
-        }
+            context = {
+                'order_table_header': order_table_header,
+                'order_table': order_table,
+                'order_table_footer': order_table_footer
+            }
         context.update(kwargs)
         return super().get_context_data(**context)
 

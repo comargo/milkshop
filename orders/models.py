@@ -27,19 +27,16 @@ class Order(helpers_models.Model):
 
 class CustomerOrder(helpers_models.Model):
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, verbose_name="Заказ", related_name="customers")
-    customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, verbose_name="Покупатель", related_name='+')
+    customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, verbose_name="Покупатель", related_name='orders')
 
     def order_cost(self):
-        cost = 0
-        for product_order in self.product_orders.all():
-            cost += product_order.order_cost()
-        return cost
-
-    def order_cost(self):
-        cost = 0
-        for product_order in self.product_orders.all():
-            cost += product_order.order_cost()
-        return cost
+        return sum(
+            (
+                product_order.confirmed_amount * product_order.product.prices.filter(
+                    date__lte=self.order.date).latest().price
+                for product_order in self.product_orders.all()
+            )
+        )
 
 
 class ProductOrder(helpers_models.Model):

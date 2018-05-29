@@ -7,20 +7,35 @@ from django.urls import reverse
 
 class Customer(helpers_models.Model):
     name = models.CharField(max_length=20, verbose_name='Имя', unique=True)
+
     class Meta:
-        verbose_name="Заказчик"
+        verbose_name = "Заказчик"
 
     def __str__(self):
         return self.name
 
-    def debit(self):
-        return self.debits.aggregate(models.Sum('amount'))['amount__sum'] or 0
+    # def credits(self):
+    #     for customer_order in self.orders.all():
+    #         date = customer_order.order.date
+    #         credit = sum()
 
-    def credit(self):
-        return 0
+    def transfers(self):
+        _debits = ({'date': debit.date, 'debit': debit.amount, 'debit_obj':debit} for debit in self.debits.all())
+        _credits = (
+            {
+                'date': customer_order.order.date,
+                'credit': customer_order.order_cost()
+            }
+            for customer_order in self.orders.all() if customer_order.order_cost() != 0
+        )
+        from itertools import chain
+        transfers = sorted(chain(_debits,_credits), key= lambda transfer: transfer['date'])
+        return transfers
 
     def balance(self):
-        return self.debit()-self.credit()
+        return sum(
+            (transfer.get('debit',0)-transfer.get('credit',0) for transfer in self.transfers())
+        )
 
 
 class Debit(helpers_models.Model):
@@ -40,4 +55,3 @@ class Debit(helpers_models.Model):
             return self.customer.get_absolute_url()
         else:
             return super().get_absolute_url(kind)
-

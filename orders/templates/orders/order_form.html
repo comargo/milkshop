@@ -6,7 +6,7 @@
     {% csrf_token %}
     {% bootstrap_form form layout='horizontal'%}
     <hr/>
-    <table class="table">
+    <table class="table table-sm table-bordered">
         <thead>
         <tr>
         {% for field in form.formset.empty_form.visible_fields %}

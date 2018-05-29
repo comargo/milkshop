@@ -74,6 +74,17 @@ class CustomerOrderConfirmForm(CustomerOrderForm):
             return initial
         return None
 
+    def has_changed(self):
+        if super().has_changed():
+            return True
+        if self.instance:
+            initial = {}
+            for productOrder in self.instance.product_orders.all():
+                product_key = f'product-{productOrder.product.product_type.pk}-{productOrder.product.pk}'
+                if productOrder.confirmed_amount != self.cleaned_data[product_key]:
+                    return True
+            return True
+
 
 OrderConfirmFormSet = forms.inlineformset_factory(orders.models.Order, orders.models.CustomerOrder,
                                                   form=CustomerOrderConfirmForm, extra=0, can_delete=False)

@@ -5,8 +5,9 @@
 <form method="post" role="form">
     {% csrf_token %}
     {% bootstrap_form form layout='horizontal'%}
+    <h2>{{ object }}</h2>
     <hr/>
-    <table class="table">
+    <table class="table table-sm table-bordered">
         <thead>
         <tr>
             <th>{% bootstrap_label form.formset.empty_form.customer.label %}</th>

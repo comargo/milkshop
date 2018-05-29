@@ -8,19 +8,23 @@
 <div>Баланс: <span class="balance">{{ customer.balance }}.00 &#8381;</span> <a
         href="{% url 'customers:debit-add' customer_pk=customer.pk %}"><i
         class="fas fa-coins">&#xf51e;</i></a></div>
-<table>
+<table class="table">
     <tr>
         <th>Дата</th>
-        <th>Взнос</th>
+        <th>Расход</th>
+        <th>Приход</th>
         <th></th>
     </tr>
-    {% for debit in customer.debits.all %}
+    {% for transfer in object.transfers %}
     <tr>
-        <td>{{ debit.date }}</td>
-        <td>{{ debit.amount }}.00 &#8381;</td>
+        <td>{{ transfer.date }}</td>
+        <td>{%if transfer.credit %}{{ transfer.credit }}.00 &#8381;{% endif %}</td>
         <td>
-            <a href="{{ debit.get_edit_url }}" title="Редактировать"><i class="fas fa-edit">&#xf044;</i></a>
-            <a href="{{ debit.get_delete_url }}" title="Удалить"><i class="fas fa-minus">&#xf068;</i></a>
+            {%if transfer.debit %}
+            {{ transfer.debit }}.00 &#8381;
+            <a href="{{ transfer.debit_obj.get_edit_url }}" title="Редактировать"><i class="fas fa-edit">&#xf044;</i></a>
+            <a href="{{ transfer.debit_obj.get_delete_url }}" title="Удалить"><i class="fas fa-minus">&#xf068;</i></a>
+            {% endif %}
         </td>
     </tr>
     {% endfor %}

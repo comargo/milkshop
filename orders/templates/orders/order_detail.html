@@ -24,7 +24,12 @@
             {% if forloop.first %}
             <th>{{ customer_order | key:header.0 }}</th>
             {% else %}
-            <td class="text-center">{{ customer_order | key:header.0 | key:0 | default:"-"}}</td>
+            <td class="text-center">
+                {% with amount_pair=customer_order|key:header.0 %}
+                    {{ amount_pair.amount | default:"-" }}
+                    ( {{ amount_pair.confirmed | default:"-" }} )
+                {% endwith %}
+            </td>
             {% endif %}
             {% endfor %}
         </tr>
@@ -35,7 +40,12 @@
             {% if forloop.first %}
             <th>{{ order_table_footer | key:header.0 }}</th>
             {% else %}
-            <th class="text-center">{{ order_table_footer | key:header.0 | key:0 | default:"-"}}</th>
+            <th class="text-center">
+                {% with amount_pair=order_table_footer|key:header.0 %}
+                    {{ amount_pair.amount | default:"-" }}
+                    ( {{ amount_pair.confirmed | default:"-" }} )
+                {% endwith %}
+            </th>
             {% endif %}
             {% endfor %}
         </tfoot>
