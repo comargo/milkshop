@@ -1,10 +1,9 @@
 from django.db import models
+
 from helpers import models as helpers_models
 
+
 # Create your models here.
-from django.urls import reverse
-
-
 class Customer(helpers_models.Model):
     name = models.CharField(max_length=20, verbose_name='Имя', unique=True)
 
@@ -20,7 +19,7 @@ class Customer(helpers_models.Model):
     #         credit = sum()
 
     def transfers(self):
-        _debits = ({'date': debit.date, 'debit': debit.amount, 'debit_obj':debit} for debit in self.debits.all())
+        _debits = ({'date': debit.date, 'debit': debit.amount, 'debit_obj': debit} for debit in self.debits.all())
         _credits = (
             {
                 'date': customer_order.order.date,
@@ -29,12 +28,12 @@ class Customer(helpers_models.Model):
             for customer_order in self.orders.all() if customer_order.order_cost() != 0
         )
         from itertools import chain
-        transfers = sorted(chain(_debits,_credits), key= lambda transfer: transfer['date'])
+        transfers = sorted(chain(_debits, _credits), key=lambda transfer: transfer['date'])
         return transfers
 
     def balance(self):
         return sum(
-            (transfer.get('debit',0)-transfer.get('credit',0) for transfer in self.transfers())
+            (transfer.get('debit', 0) - transfer.get('credit', 0) for transfer in self.transfers())
         )
 
 

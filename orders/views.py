@@ -1,14 +1,12 @@
 import datetime
 
-from django.core.exceptions import ImproperlyConfigured
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404
 from django.utils.translation import gettext as _
-from django.views.generic import DetailView, CreateView, FormView, UpdateView
-from django.views.generic.base import View, TemplateView
+from django.views.generic import DetailView, CreateView, UpdateView
 
+import products.models
 from orders import forms
 from orders.models import Order
-import products.models
 
 
 # Create your views here.
@@ -45,11 +43,11 @@ class OrderView(OrderMixin, DetailView):
                 'confirmed': sum(customer_order[str(product.pk)]['confirmed'] or 0 for customer_order in order_table),
             }
 
-            context = {
-                'order_table_header': order_table_header,
-                'order_table': order_table,
-                'order_table_footer': order_table_footer
-            }
+        context = {
+            'order_table_header': order_table_header,
+            'order_table': order_table,
+            'order_table_footer': order_table_footer
+        }
         context.update(kwargs)
         return super().get_context_data(**context)
 

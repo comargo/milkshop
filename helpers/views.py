@@ -2,6 +2,7 @@ import django.core.exceptions
 import django.forms
 import django.views.generic
 
+
 class CreateWithParentView(django.views.generic.CreateView):
     parent_field = None
 

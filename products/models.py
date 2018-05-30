@@ -1,10 +1,9 @@
 from django.db import models
+
 from helpers import models as helpers_models
 
+
 # Create your models here.
-from django.urls import reverse
-
-
 class ProductType(helpers_models.Model):
     name = models.CharField(max_length=20, verbose_name="Тип продукции")
 
@@ -24,7 +23,7 @@ class Product(helpers_models.Model):
     def price(self):
         try:
             return self.prices.latest().price
-        except:
+        except self.prices.model.DoesNotExist:
             return 0
 
     class Meta:
@@ -58,7 +57,7 @@ class Price(helpers_models.Model):
         get_latest_by = 'date'
 
     def __str__(self):
-        return "{self.price}.00 ₽ ({self.date})".format(self = self)
+        return "{self.price}.00 ₽ ({self.date})".format(self=self)
 
     def get_object_url_kwargs(self):
         kwargs: dict = self.product.get_object_url_kwargs()

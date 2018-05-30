@@ -5,7 +5,6 @@ from django.views.generic import ListView, CreateView, UpdateView, DetailView, D
 import customers.forms
 import customers.models
 from helpers.views import CreateWithParentView
-import orders.models
 
 
 class CustomerMixin:

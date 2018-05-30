@@ -3,7 +3,7 @@ from helpers import models as helpers_models
 
 # Create your models here.
 from customers.models import Customer
-from products.models import Product, Price
+import products.models
 
 
 class Order(helpers_models.Model):
@@ -27,7 +27,8 @@ class Order(helpers_models.Model):
 
 class CustomerOrder(helpers_models.Model):
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, verbose_name="Заказ", related_name="customers")
-    customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, verbose_name="Покупатель", related_name='orders')
+    customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, verbose_name="Покупатель",
+                                 related_name='orders')
 
     def order_cost(self):
         return sum(
@@ -41,7 +42,7 @@ class CustomerOrder(helpers_models.Model):
 
 class ProductOrder(helpers_models.Model):
     customerOrder = models.ForeignKey(to=CustomerOrder, on_delete=models.CASCADE, related_name='product_orders')
-    product = models.ForeignKey(to=Product, on_delete=models.CASCADE, verbose_name="Продукция", related_name='+')
+    product = models.ForeignKey(to=products.models.Product, on_delete=models.CASCADE, verbose_name="Продукция", related_name='+')
     amount = models.PositiveSmallIntegerField(verbose_name="Количество")
     confirmed_amount = models.PositiveSmallIntegerField(verbose_name="Подтвержденное количество", default=0)
 
@@ -55,6 +56,6 @@ class ProductOrder(helpers_models.Model):
         query = self.product.prices.filter(date__date__lte=self.customerOrder.order.date)
         try:
             price_obj = query.latest()
-        except Price.DoesNotExist:
+        except products.models.Price.DoesNotExist:
             return 0
         return price_obj.price

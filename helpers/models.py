@@ -10,7 +10,7 @@ class Model(django.db.models.Model):
     urlpattern = None
 
     def get_urlpattern(self):
-        return self.urlpattern or "{meta.app_label}:{meta.model_name}".format(meta = self._meta)
+        return self.urlpattern or "{meta.app_label}:{meta.model_name}".format(meta=self._meta)
 
     def get_object_url_kwargs(self):
         kwargs = {"{model_name}_pk".format(model_name=self._meta.model_name): self.pk}

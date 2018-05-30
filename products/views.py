@@ -38,7 +38,7 @@ class PriceMixin:
 
     def get_context_data(self, **kwargs):
         kwargs['product'] = self.product
-        return super(ProductMixin, self).get_context_data(**kwargs)
+        return super().get_context_data(**kwargs)
 
 
 # Create your views here.
@@ -56,10 +56,8 @@ class ProductTypeAddView(ProductTypeMixin, CreateView):
 
 class ProductEditView(ProductMixin, UpdateView):
     form_class = products.forms.ProductForm
-    #fields = django.forms.ALL_FIELDS
 
 
 class ProductAddView(ProductMixin, CreateWithParentView):
     form_class = products.forms.ProductForm
-    #fields = django.forms.ALL_FIELDS
     parent_field = 'product_type'

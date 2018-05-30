@@ -121,7 +121,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 BOOTSTRAP4 = {
-    'include_jquery' : 'slim',
+    'include_jquery': 'slim',
 }
 
 # project_context settings

@@ -1,10 +1,6 @@
-import datetime
-
-from django.urls import path, include, reverse_lazy, register_converter
-from django.views.generic import RedirectView
+from django.urls import path, include
 
 import customers.views
-
 
 app_name = 'customers'
 
