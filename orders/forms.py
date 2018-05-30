@@ -42,7 +42,8 @@ class CustomerOrderForm(forms.ModelForm):
             product = products.models.Product.objects.get(pk=match['product'], product_type=match['type'])
             if value and value > 0:
                 product_order, created = self.instance.product_orders.update_or_create(product=product,
-                                                                                  defaults={self.amount_field: value})
+                                                                                       defaults={
+                                                                                           self.amount_field: value})
                 product_order.save()
             else:
                 try:
@@ -52,7 +53,6 @@ class CustomerOrderForm(forms.ModelForm):
                 except self.instance.product_orders.model.DoesNotExist:
                     pass
         return self.instance
-
 
 
 OrderFormSet = forms.inlineformset_factory(orders.models.Order, orders.models.CustomerOrder, form=CustomerOrderForm,
