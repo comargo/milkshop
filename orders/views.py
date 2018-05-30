@@ -100,7 +100,7 @@ class OrderConfirmView(OrderMixin, UpdateView):
         #        for fields in form.visible_fields():
         #            post_initial[]
         for subform in form.formset.forms:
-            customer = self.object.customers.get(pk=subform['customer'].value())
+            customer = self.object.customers.get(customer_id=subform['customer'].value())
             for product_order in customer.product_orders.all():
                 if product_order.amount:
                     post_initial[subform.add_prefix(product_order.product.get_field_name())] = \
