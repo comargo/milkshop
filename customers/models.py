@@ -13,11 +13,6 @@ class Customer(helpers_models.Model):
     def __str__(self):
         return self.name
 
-    # def credits(self):
-    #     for customer_order in self.orders.all():
-    #         date = customer_order.order.date
-    #         credit = sum()
-
     def transfers(self):
         _debits = ({'date': debit.date, 'debit': debit.amount, 'debit_obj': debit} for debit in self.debits.all())
         _credits = (
