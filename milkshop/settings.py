@@ -124,6 +124,8 @@ BOOTSTRAP4 = {
     'include_jquery': 'slim',
 }
 
+FIXTURE_DIRS = ['fixtures']
+
 # project_context settings
 PROJECT = {
     'title': 'Заказ Молока',

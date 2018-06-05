@@ -1,0 +1,98 @@
+[
+{
+  "model": "customers.customer",
+  "pk": 1,
+  "fields": {
+    "name": "user1"
+  }
+},
+{
+  "model": "customers.customer",
+  "pk": 2,
+  "fields": {
+    "name": "user2"
+  }
+},
+{
+  "model": "products.producttype",
+  "pk": 1,
+  "fields": {
+    "name": "type1"
+  }
+},
+{
+  "model": "products.producttype",
+  "pk": 2,
+  "fields": {
+    "name": "type2"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 1,
+  "fields": {
+    "product_type": 1,
+    "name": "product1"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 2,
+  "fields": {
+    "product_type": 1,
+    "name": "product2"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 3,
+  "fields": {
+    "product_type": 2,
+    "name": "product3"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 4,
+  "fields": {
+    "product_type": 2,
+    "name": "product4"
+  }
+},
+{
+  "model": "products.price",
+  "pk": 1,
+  "fields": {
+    "product": 1,
+    "price": 100,
+    "date": "2018-06-04"
+  }
+},
+{
+  "model": "products.price",
+  "pk": 2,
+  "fields": {
+    "product": 2,
+    "price": 200,
+    "date": "2018-06-04"
+  }
+},
+{
+  "model": "products.price",
+  "pk": 3,
+  "fields": {
+    "product": 3,
+    "price": 300,
+    "date": "2018-06-04"
+  }
+},
+{
+  "model": "products.price",
+  "pk": 4,
+  "fields": {
+    "product": 4,
+    "price": 400,
+    "date": "2018-06-04"
+  }
+}
+]
