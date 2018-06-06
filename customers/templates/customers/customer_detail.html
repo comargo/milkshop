@@ -5,9 +5,11 @@
     {{ customer }}
     <a href="{{ customer.get_edit_url }}" title="Редактировать"><i class="fas fa-edit">&#xf044;</i></a>
 </h1>
-<div>Баланс: <span class="balance">{{ customer.balance }}.00 &#8381;</span> <a
-        href="{% url 'customers:debit-add' customer_pk=customer.pk %}"><i
-        class="fas fa-coins">&#xf51e;</i></a></div>
+<div>Баланс: <span class="balance">{{ customer.balance }}.00 &#8381;</span>
+    <a href="{{ customer.get_debit_url }}">
+        <i class="fas fa-coins">&#xf51e;</i>
+    </a>
+</div>
 <table class="table">
     <tr>
         <th>Дата</th>
@@ -22,7 +24,9 @@
         <td>
             {%if transfer.debit %}
             {{ transfer.debit }}.00 &#8381;
-            <a href="{{ transfer.debit_obj.get_edit_url }}" title="Редактировать"><i class="fas fa-edit">&#xf044;</i></a>
+            <a href="{{ transfer.debit_obj.get_edit_url }}" title="Редактировать">
+                <i class="fas fa-edit">&#xf044;</i>
+            </a>
             <a href="{{ transfer.debit_obj.get_delete_url }}" title="Удалить"><i class="fas fa-minus">&#xf068;</i></a>
             {% endif %}
         </td>

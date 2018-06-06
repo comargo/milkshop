@@ -1,0 +1,16 @@
+[
+  {
+    "model": "customers.customer",
+    "pk": 1,
+    "fields": {
+      "name": "user1"
+    }
+  },
+  {
+    "model": "customers.customer",
+    "pk": 2,
+    "fields": {
+      "name": "user2"
+    }
+  }
+]

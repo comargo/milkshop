@@ -12,7 +12,7 @@
     {% csrf_token %}
     <p>Вы уверены что хотите удалить приход от <strong>{{ customer.name }}</strong> на сумму
         <strong>{{ debit.amount }}.00 &#8381; </strong> от <strong>{{ debit.date }}</strong></p>
-    {% buttons submit='OK' reset='Cancel'%}
+    {% buttons submit='OK' %}
     {% endbuttons %}
 </form>
 {% endblock %}

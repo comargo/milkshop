@@ -31,6 +31,8 @@ class Customer(helpers_models.BrowseableObjectModel):
             (transfer.get('debit', 0) - transfer.get('credit', 0) for transfer in self.transfers())
         )
 
+    def get_debit_url(self):
+        return self.get_absolute_url('debit')
 
 
 class Debit(helpers_models.BrowseableObjectModel):

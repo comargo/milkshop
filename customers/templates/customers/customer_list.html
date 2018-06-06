@@ -21,7 +21,7 @@
             </td>
             <td>
                 {{ customer.balance }}.00 &#8381;
-                <a href="{% url 'customers:debit-add' customer_pk=customer.pk %}" title="Взнос">
+                <a href="{{ customer.get_debit_url }}" title="Взнос">
                     <i class="fas fa-coins">&#xf51e;</i>
                 </a>
             </td>
