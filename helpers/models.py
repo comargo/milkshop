@@ -3,7 +3,7 @@ from django.urls import reverse
 import django.db.models.options
 
 
-class Model(django.db.models.Model):
+class BrowseableObjectModel(django.db.models.Model):
     class Meta:
         abstract = True
 

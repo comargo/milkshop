@@ -6,7 +6,7 @@ from customers.models import Customer
 import products.models
 
 
-class Order(helpers_models.Model):
+class Order(helpers_models.BrowseableObjectModel):
     date = models.DateField(verbose_name="Дата заказа")
 
     def order_cost(self):
@@ -25,7 +25,7 @@ class Order(helpers_models.Model):
         return "Заказ {self.date:%Y-%m-%d}".format(self=self)
 
 
-class CustomerOrder(helpers_models.Model):
+class CustomerOrder(helpers_models.BrowseableObjectModel):
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, verbose_name="Заказ", related_name="customers")
     customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, verbose_name="Покупатель",
                                  related_name='orders')
@@ -40,7 +40,7 @@ class CustomerOrder(helpers_models.Model):
         )
 
 
-class ProductOrder(helpers_models.Model):
+class ProductOrder(helpers_models.BrowseableObjectModel):
     customerOrder = models.ForeignKey(to=CustomerOrder, on_delete=models.CASCADE, related_name='product_orders')
     product = models.ForeignKey(to=products.models.Product, on_delete=models.CASCADE, verbose_name="Продукция", related_name='+')
     amount = models.PositiveSmallIntegerField(verbose_name="Количество")

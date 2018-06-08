@@ -4,7 +4,7 @@ from helpers import models as helpers_models
 
 
 # Create your models here.
-class Customer(helpers_models.Model):
+class Customer(helpers_models.BrowseableObjectModel):
     name = models.CharField(max_length=20, verbose_name='Имя', unique=True)
 
     class Meta:
@@ -32,7 +32,8 @@ class Customer(helpers_models.Model):
         )
 
 
-class Debit(helpers_models.Model):
+
+class Debit(helpers_models.BrowseableObjectModel):
     customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, verbose_name="Покупатель",
                                  related_name='debits')
     amount = models.IntegerField(verbose_name="Приход", default=0)

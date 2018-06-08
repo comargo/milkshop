@@ -4,7 +4,7 @@ from helpers import models as helpers_models
 
 
 # Create your models here.
-class ProductType(helpers_models.Model):
+class ProductType(helpers_models.BrowseableObjectModel):
     name = models.CharField(max_length=20, verbose_name="Тип продукции")
 
     class Meta:
@@ -14,7 +14,7 @@ class ProductType(helpers_models.Model):
         return self.name
 
 
-class Product(helpers_models.Model):
+class Product(helpers_models.BrowseableObjectModel):
     product_type = models.ForeignKey(to=ProductType, on_delete=models.CASCADE, verbose_name="Тип продукции",
                                      related_name='products')
     name = models.CharField(max_length=20, verbose_name="Объем/особенность", blank=True)
@@ -47,7 +47,7 @@ class Product(helpers_models.Model):
         return f'product-{self.product_type.pk}-{self.pk}'
 
 
-class Price(helpers_models.Model):
+class Price(helpers_models.BrowseableObjectModel):
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE, verbose_name="Продукция", related_name="prices")
     price = models.PositiveIntegerField(verbose_name="Цена")
     date = models.DateField(verbose_name="Дата", auto_now_add=True)
