@@ -1,9 +1,9 @@
 from django.db import models
-from helpers import models as helpers_models
 
+import products.models
 # Create your models here.
 from customers.models import Customer
-import products.models
+from helpers import models as helpers_models
 
 
 class Order(helpers_models.BrowseableObjectModel):
@@ -42,7 +42,8 @@ class CustomerOrder(helpers_models.BrowseableObjectModel):
 
 class ProductOrder(helpers_models.BrowseableObjectModel):
     customerOrder = models.ForeignKey(to=CustomerOrder, on_delete=models.CASCADE, related_name='product_orders')
-    product = models.ForeignKey(to=products.models.Product, on_delete=models.CASCADE, verbose_name="Продукция", related_name='+')
+    product = models.ForeignKey(to=products.models.Product, on_delete=models.CASCADE,
+                                verbose_name="Продукция", related_name='+')
     amount = models.PositiveSmallIntegerField(verbose_name="Количество")
     confirmed_amount = models.PositiveSmallIntegerField(verbose_name="Подтвержденное количество", default=0)
 

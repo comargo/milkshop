@@ -151,7 +151,7 @@ class DebitAddViewTestCase(ViewTestCaseMixin, TestCase):
 
     def test_amount_field_negative_balance(self):
         product = products.models.Product.objects.first()
-        product_order = orders.models.Order.objects.create(date=date.today()) \
+        orders.models.Order.objects.create(date=date.today()) \
             .customers.create(customer=self.customer) \
             .product_orders.create(product=product, amount=0, confirmed_amount=1)
 

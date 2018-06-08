@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+
 import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -24,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'top-secret-key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('MILKSHOP_DEBUG', os.environ.get('DEBUG','False')).lower() in ['1', 'true', 't', 'yes', 'y']
+DEBUG = os.environ.get('MILKSHOP_DEBUG', os.environ.get('DEBUG', 'False')).lower() in ['1', 'true', 't', 'yes', 'y']
 
 ALLOWED_HOSTS = []
 

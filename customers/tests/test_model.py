@@ -12,11 +12,13 @@ import products.models
 class CustomerTestCase(TestCase):
     fixtures = ['test_products']
 
-    def _test_customer(self, name="test name", create_kwargs={}):
+    def _test_customer(self, name="test name", create_kwargs=None):
+        create_kwargs = create_kwargs or {}
         test_customer = customers.models.Customer.objects.create(name=name, **create_kwargs)
         return test_customer
 
-    def _test_debit(self, customer, amount=100, create_kwargs={}):
+    def _test_debit(self, customer, amount=100, create_kwargs=None):
+        create_kwargs = create_kwargs or {}
         test_debit = customer.debits.create(amount=amount, **create_kwargs)
         return test_debit
 
@@ -44,7 +46,7 @@ class CustomerTestCase(TestCase):
         order = orders.models.Order.objects.create(date=date.today())
         customer_order = order.customers.create(customer=test_customer)
         product_amount = 1
-        product_order = customer_order.product_orders.create(product=product, amount=0, confirmed_amount=product_amount)
+        customer_order.product_orders.create(product=product, amount=0, confirmed_amount=product_amount)
         self.assertEqual(
             [{'date': date.today(), 'credit': product.price * product_amount}],
             test_customer.transfers()
@@ -62,10 +64,10 @@ class CustomerTestCase(TestCase):
 
         product_amount1 = 1
         product_amount2 = 2
-        product_order1 = orders.models.Order.objects.create(date=date.today() - timedelta(days=5)) \
+        orders.models.Order.objects.create(date=date.today() - timedelta(days=5)) \
             .customers.create(customer=test_customer) \
             .product_orders.create(product=product, amount=0, confirmed_amount=product_amount1)
-        product_order2 = orders.models.Order.objects.create(date=date.today()) \
+        orders.models.Order.objects.create(date=date.today()) \
             .customers.create(customer=test_customer) \
             .product_orders.create(product=product, amount=0, confirmed_amount=product_amount2)
 
@@ -80,6 +82,7 @@ class CustomerTestCase(TestCase):
 
     def test_balance_init(self):
         test_customer = self._test_customer()
+        self.assertEqual(0, test_customer.balance())
 
     def test_balance_debit(self):
         test_customer = self._test_customer()
@@ -113,7 +116,7 @@ class CustomerTestCase(TestCase):
         for test in range(len(orders_info)):
             with self.subTest(test):
                 order = orders_info[test]
-                product_order = orders.models.Order.objects.create(date=order['date']) \
+                orders.models.Order.objects.create(date=order['date']) \
                     .customers.create(customer=test_customer) \
                     .product_orders.create(product=product, amount=0, confirmed_amount=order['amount'])
 
@@ -155,11 +158,13 @@ class CustomerTestCase(TestCase):
 
 
 class DebitTestCase(TestCase):
-    def _test_customer(self, name="test name", create_kwargs={}):
+    def _test_customer(self, name="test name", create_kwargs=None):
+        create_kwargs = create_kwargs or {}
         test_customer = customers.models.Customer.objects.create(name=name, **create_kwargs)
         return test_customer
 
-    def _test_debit(self, customer=None, amount=100, create_kwargs={}):
+    def _test_debit(self, customer=None, amount=100, create_kwargs=None):
+        create_kwargs = create_kwargs or {}
         customer = customer or self._test_customer()
         test_debit = customer.debits.create(amount=amount, **create_kwargs)
         return test_debit

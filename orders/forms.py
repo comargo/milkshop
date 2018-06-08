@@ -1,9 +1,9 @@
-from django import forms
 import re
+
+from django import forms
 
 import orders.models
 import products.models
-import customers.models
 
 
 class CustomerOrderForm(forms.ModelForm):
