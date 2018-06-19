@@ -1,6 +1,6 @@
 import django.db.models
-from django.urls import reverse
 import django.db.models.options
+from django.urls import reverse
 
 
 class BrowseableObjectModel(django.db.models.Model):
@@ -10,16 +10,17 @@ class BrowseableObjectModel(django.db.models.Model):
     urlpattern = None
 
     def get_urlpattern(self):
-        return self.urlpattern or "{meta.app_label}:{meta.model_name}".format(meta=self._meta)
+        meta = self._meta
+        return self.urlpattern or f"{meta.app_label}:{meta.model_name}"
 
     def get_object_url_kwargs(self):
-        kwargs = {"{model_name}_pk".format(model_name=self._meta.model_name): self.pk}
+        kwargs = {f"{self._meta.model_name}_pk": self.pk}
         return kwargs
 
     def get_absolute_url(self, kind=None):
         urlpattern = self.get_urlpattern()
         if kind:
-            urlpattern = "{urlpattern}-{kind}".format(urlpattern=urlpattern, kind=kind)
+            urlpattern = f"{urlpattern}-{kind}"
         return reverse(urlpattern, kwargs=self.get_object_url_kwargs())
 
     def get_edit_url(self):
