@@ -35,7 +35,6 @@
     {% buttons submit='OK' reset='Cancel'%}
     {% endbuttons %}
 </form>
-{{ post_initial | json_script:"post-initial" | force_escape}}
 {% endblock %}
 {% block bootstrap4_extra_script %}
 {{ block.super }}
