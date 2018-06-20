@@ -12,14 +12,15 @@ import products.models
 class CustomerTestCase(TestCase):
     fixtures = ['test_products']
 
-    def _test_customer(self, name="test name", create_kwargs=None):
-        create_kwargs = create_kwargs or {}
-        test_customer = customers.models.Customer.objects.create(name=name, **create_kwargs)
+    @staticmethod
+    def _test_customer(name="test name"):
+        test_customer = customers.models.Customer.objects.create(name=name)
         return test_customer
 
-    def _test_debit(self, customer, amount=100, create_kwargs=None):
-        create_kwargs = create_kwargs or {}
-        test_debit = customer.debits.create(amount=amount, **create_kwargs)
+    @staticmethod
+    def _test_debit(customer=None, amount=100):
+        customer = customer or CustomerTestCase._test_customer()
+        test_debit = customer.debits.create(amount=amount)
         return test_debit
 
     def test___str__(self):
@@ -158,16 +159,9 @@ class CustomerTestCase(TestCase):
 
 
 class DebitTestCase(TestCase):
-    def _test_customer(self, name="test name", create_kwargs=None):
-        create_kwargs = create_kwargs or {}
-        test_customer = customers.models.Customer.objects.create(name=name, **create_kwargs)
-        return test_customer
-
-    def _test_debit(self, customer=None, amount=100, create_kwargs=None):
-        create_kwargs = create_kwargs or {}
-        customer = customer or self._test_customer()
-        test_debit = customer.debits.create(amount=amount, **create_kwargs)
-        return test_debit
+    @staticmethod
+    def _test_debit(customer=None, amount=100):
+        return CustomerTestCase._test_debit(customer=customer, amount=amount)
 
     def test_get_urlpattern(self):
         test_debit = self._test_debit()
