@@ -14,17 +14,14 @@ class ProductForm(forms.ModelForm):
         }
 
     price = forms.IntegerField(label="Цена", widget=forms.NumberInput(attrs={'addon_after': '.00 &#8381;'}))
-    price_date = forms.DateField(widget=forms.HiddenInput())
 
     def __init__(self, instance=None, initial=None, **kwargs):
         initial = initial or {}
         initial['price'] = 0
-        initial['price_date'] = datetime.date.today()
         if instance:
             try:
                 price_obj = instance.prices.latest()
                 initial['price'] = price_obj.price
-                initial['price_date'] = price_obj.date
             except models.Price.DoesNotExist:
                 pass
         super(ProductForm, self).__init__(instance=instance, initial=initial, **kwargs)
@@ -32,7 +29,7 @@ class ProductForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(ProductForm, self).save(commit)
         if 'price' in self.changed_data:
-            instance.prices.update_or_create(date=self.initial['price_date'],
+            instance.prices.update_or_create(date=datetime.date.today(),
                                              defaults={'price': self.cleaned_data['price']}
                                              )
         return instance

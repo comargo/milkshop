@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Model
 
 from helpers import models as helpers_models
 
@@ -47,7 +48,7 @@ class Product(helpers_models.BrowseableObjectModel):
         return f'product-{self.product_type.pk}-{self.pk}'
 
 
-class Price(helpers_models.BrowseableObjectModel):
+class Price(Model):
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE, verbose_name="Продукция", related_name="prices")
     price = models.PositiveIntegerField(verbose_name="Цена")
     date = models.DateField(verbose_name="Дата", auto_now_add=True)
@@ -55,17 +56,7 @@ class Price(helpers_models.BrowseableObjectModel):
     class Meta:
         verbose_name = "Цена"
         get_latest_by = 'date'
+        ordering = ['date']
 
     def __str__(self):
         return "{self.price}.00 ₽ ({self.date})".format(self=self)
-
-    def get_object_url_kwargs(self):
-        kwargs: dict = self.product.get_object_url_kwargs()
-        kwargs.update(super(Price, self).get_object_url_kwargs())
-        return kwargs
-
-    def get_absolute_url(self, kind=None):
-        if kind is None:
-            return self.product.get_absolute_url()
-        else:
-            return super().get_absolute_url(kind)
