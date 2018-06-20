@@ -68,18 +68,23 @@ class OrderCreateView(OrderMixin, CreateView):
     form_class = forms.OrderForm
 
     def get_context_data(self, **kwargs):
-        latest_order = self.get_queryset().latest()
         orders = []
-        for customer in latest_order.customers.all():
-            order = {'customer': customer.customer.id}
-            for product_order in customer.product_orders.all():
-                if product_order.amount:
-                    order[product_order.product.get_field_name()] = product_order.amount
-            orders.append(order)
+        order_date = datetime.date.today()
+        try:
+            latest_order = self.get_queryset().latest()
+            for customer in latest_order.customers.all():
+                order = {'customer': customer.customer.id}
+                for product_order in customer.product_orders.all():
+                    if product_order.amount:
+                        order[product_order.product.get_field_name()] = product_order.amount
+                orders.append(order)
+            order_date = latest_order.date
+        except Order.DoesNotExist:
+            pass
 
         form = kwargs.get('form', self.get_form())
         form.formset.extra = len(orders) + 1
-        post_initial = {form.add_prefix('date'): latest_order.date + datetime.timedelta(days=7)}
+        post_initial = {form.add_prefix('date'): order_date + datetime.timedelta(days=7)}
         for i in range(len(orders)):
             for field, value in orders[i].items():
                 post_initial[form.formset[i].add_prefix(field)] = value

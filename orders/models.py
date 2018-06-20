@@ -20,43 +20,44 @@ class Order(helpers_models.BrowseableObjectModel):
 
     class Meta:
         get_latest_by = 'date'
+        ordering = ['date']
 
     def __str__(self):
         return "Заказ {self.date:%Y-%m-%d}".format(self=self)
 
 
-class CustomerOrder(helpers_models.BrowseableObjectModel):
+class CustomerOrder(models.Model):
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, verbose_name="Заказ", related_name="customers")
     customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, verbose_name="Покупатель",
                                  related_name='orders')
 
+    def _cost(self, field):
+        return sum((getattr(product_order, field)() for product_order in self.product_orders.all()))
+
+    def confirmed_cost(self):
+        return self._cost("confirmed_cost")
+
     def order_cost(self):
-        return sum(
-            (
-                product_order.confirmed_amount * product_order.product.prices.filter(
-                    date__lte=self.order.date).latest().price
-                for product_order in self.product_orders.all()
-            )
-        )
+        return self._cost("order_cost")
 
 
-class ProductOrder(helpers_models.BrowseableObjectModel):
+class ProductOrder(models.Model):
     customerOrder = models.ForeignKey(to=CustomerOrder, on_delete=models.CASCADE, related_name='product_orders')
     product = models.ForeignKey(to=products.models.Product, on_delete=models.CASCADE,
                                 verbose_name="Продукция", related_name='+')
     amount = models.PositiveSmallIntegerField(verbose_name="Количество")
     confirmed_amount = models.PositiveSmallIntegerField(verbose_name="Подтвержденное количество", default=0)
 
-    def order_cost(self):
-        return self.amount * self.price()
-
-    def confirmed_cost(self):
-        return self.confirmed_amount * self.price()
-
-    def price(self):
-        query = self.product.prices.filter(date__date__lte=self.customerOrder.order.date)
+    def _price(self):
+        query = self.product.prices.filter(date__lte=self.customerOrder.order.date)
         try:
             price_obj = query.latest()
         except products.models.Price.DoesNotExist:
             return 0
         return price_obj.price
+
+    def order_cost(self):
+        return self.amount * self._price()
+
+    def confirmed_cost(self):
+        return self.confirmed_amount * self._price()

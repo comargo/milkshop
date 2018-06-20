@@ -52,7 +52,7 @@ class ProductTypeEditViewTestCase(ViewTestCaseMixin, TestCase):
         new_name = 'new type'
         response = self.client.post(self.url, {'name': new_name})
         new_producttype = models.ProductType.objects.get(pk=self.producttype.pk)
-        self.assertEqual(new_producttype.name, new_name)
+        self.assertEqual(new_name, new_producttype.name)
         self.assertRedirects(response, self.producttype.get_absolute_url(), target_status_code=301)
 
 
@@ -129,8 +129,8 @@ class ProductEditViewTestCase(ViewTestCaseMixin, TestCase):
                                      })
         new_product = models.Product.objects.get(pk=self.product.pk)
         self.assertRedirects(response, self.product.get_absolute_url(), target_status_code=301)
-        self.assertEqual(new_product.name, new_name)
-        self.assertEqual(new_product.price, new_price)
+        self.assertEqual(new_name, new_product.name)
+        self.assertEqual(new_price, new_product.price)
         self.assertQuerysetEqual(new_product.prices.all(), prices, price_transform)
 
 
@@ -177,6 +177,6 @@ class ProductAddViewTestCase(ViewTestCaseMixin, TestCase):
                                      })
         new_product = models.Product.objects.get(name=new_name, product_type=self.producttype)
         self.assertRedirects(response, new_product.get_absolute_url(), target_status_code=301)
-        self.assertEqual(new_product.name, new_name)
-        self.assertEqual(new_product.price, new_price)
+        self.assertEqual(new_name, new_product.name)
+        self.assertEqual(new_price, new_product.price)
         self.assertQuerysetEqual(new_product.prices.all(), prices, price_transform)

@@ -1,0 +1,65 @@
+[
+  {
+    "model": "orders.order",
+    "pk": 1,
+    "fields": {
+      "date": "2001-01-07"
+    }
+  },
+  {
+    "model": "orders.customerorder",
+    "pk": 1,
+    "fields": {
+      "order": 1,
+      "customer": 1
+    }
+  },
+  {
+    "model": "orders.customerorder",
+    "pk": 2,
+    "fields": {
+      "order": 1,
+      "customer": 2
+    }
+  },
+  {
+    "model": "orders.productorder",
+    "pk": 1,
+    "fields": {
+      "customerOrder": 1,
+      "product": 1,
+      "amount": 1,
+      "confirmed_amount": 0
+    }
+  },
+  {
+    "model": "orders.productorder",
+    "pk": 2,
+    "fields": {
+      "customerOrder": 1,
+      "product": 4,
+      "amount": 1,
+      "confirmed_amount": 0
+    }
+  },
+  {
+    "model": "orders.productorder",
+    "pk": 3,
+    "fields": {
+      "customerOrder": 2,
+      "product": 2,
+      "amount": 2,
+      "confirmed_amount": 0
+    }
+  },
+  {
+    "model": "orders.productorder",
+    "pk": 4,
+    "fields": {
+      "customerOrder": 2,
+      "product": 3,
+      "amount": 2,
+      "confirmed_amount": 0
+    }
+  }
+]

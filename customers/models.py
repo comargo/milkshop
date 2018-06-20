@@ -18,9 +18,9 @@ class Customer(helpers_models.BrowseableObjectModel):
         _credits = (
             {
                 'date': customer_order.order.date,
-                'credit': customer_order.order_cost()
+                'credit': customer_order.confirmed_cost()
             }
-            for customer_order in self.orders.all() if customer_order.order_cost() != 0
+            for customer_order in self.orders.all() if customer_order.confirmed_cost() != 0
         )
         from itertools import chain
         transfers = sorted(chain(_debits, _credits), key=lambda transfer: transfer['date'])
