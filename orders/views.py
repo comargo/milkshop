@@ -53,14 +53,16 @@ class OrderView(OrderMixin, DetailView):
 
 
 class LastOrderView(OrderView):
+    def get(self, request, *args, **kwargs):
+        try:
+            return super().get(request, *args, **kwargs)
+        except self.model.DoesNotExist:
+            return redirect(reverse('orders:create'))
+
     def get_object(self, queryset=None):
         if queryset is None:
             queryset = self.get_queryset()
-        try:
-            obj = queryset.latest()
-        except queryset.model.DoesNotExist:
-            raise Http404(_("No %(verbose_name)s found matching the query") %
-                          {'verbose_name': queryset.model._meta.verbose_name})
+        obj = queryset.latest()
         return obj
 
 
