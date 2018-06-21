@@ -47,7 +47,7 @@ class CustomerTestCase(TestCase):
         order = orders.models.Order.objects.create(date=date.today())
         customer_order = order.customers.create(customer=test_customer)
         product_amount = 1
-        customer_order.product_orders.create(product=product, amount=0, confirmed_amount=product_amount)
+        customer_order.product_orders.create(product=product, amount=0, _confirmed_amount=product_amount)
         self.assertEqual(
             [{'date': date.today(), 'credit': product.price * product_amount}],
             test_customer.transfers()
@@ -67,10 +67,10 @@ class CustomerTestCase(TestCase):
         product_amount2 = 2
         orders.models.Order.objects.create(date=date.today() - timedelta(days=5)) \
             .customers.create(customer=test_customer) \
-            .product_orders.create(product=product, amount=0, confirmed_amount=product_amount1)
+            .product_orders.create(product=product, amount=0, _confirmed_amount=product_amount1)
         orders.models.Order.objects.create(date=date.today()) \
             .customers.create(customer=test_customer) \
-            .product_orders.create(product=product, amount=0, confirmed_amount=product_amount2)
+            .product_orders.create(product=product, amount=0, _confirmed_amount=product_amount2)
 
         self.assertEqual([
             {'date': date.today() - timedelta(days=5), 'credit': product.price * product_amount1},
@@ -119,7 +119,7 @@ class CustomerTestCase(TestCase):
                 order = orders_info[test]
                 orders.models.Order.objects.create(date=order['date']) \
                     .customers.create(customer=test_customer) \
-                    .product_orders.create(product=product, amount=0, confirmed_amount=order['amount'])
+                    .product_orders.create(product=product, amount=0, _confirmed_amount=order['amount'])
 
                 self.assertEqual(-1 * sum(product.price * orders_info[i]['amount'] for i in range(test + 1)),
                                  test_customer.balance())

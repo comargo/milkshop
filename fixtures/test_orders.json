@@ -28,8 +28,7 @@
     "fields": {
       "customerOrder": 1,
       "product": 1,
-      "amount": 1,
-      "confirmed_amount": 0
+      "amount": 1
     }
   },
   {
@@ -38,8 +37,7 @@
     "fields": {
       "customerOrder": 1,
       "product": 4,
-      "amount": 1,
-      "confirmed_amount": 0
+      "amount": 1
     }
   },
   {
@@ -48,8 +46,7 @@
     "fields": {
       "customerOrder": 2,
       "product": 2,
-      "amount": 2,
-      "confirmed_amount": 0
+      "amount": 2
     }
   },
   {
@@ -58,8 +55,7 @@
     "fields": {
       "customerOrder": 2,
       "product": 3,
-      "amount": 2,
-      "confirmed_amount": 0
+      "amount": 2
     }
   }
 ]

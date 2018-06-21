@@ -31,6 +31,9 @@ class CustomerOrder(models.Model):
     customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, verbose_name="Покупатель",
                                  related_name='orders')
 
+    def __str__(self):
+        return f"{self.order} for {self.customer}"
+
     def _cost(self, field):
         return sum((getattr(product_order, field)() for product_order in self.product_orders.all()))
 
@@ -46,7 +49,10 @@ class ProductOrder(models.Model):
     product = models.ForeignKey(to=products.models.Product, on_delete=models.CASCADE,
                                 verbose_name="Продукция", related_name='+')
     amount = models.PositiveSmallIntegerField(verbose_name="Количество")
-    confirmed_amount = models.PositiveSmallIntegerField(verbose_name="Подтвержденное количество", default=0)
+    _confirmed_amount = models.PositiveSmallIntegerField(verbose_name="Подтвержденное количество", null=True)
+
+    def __str__(self):
+        return f"{self.customerOrder}:{self.product.name} ({self.amount}/{self._confirmed_amount})"
 
     def _price(self):
         query = self.product.prices.filter(date__lte=self.customerOrder.order.date)
@@ -58,6 +64,14 @@ class ProductOrder(models.Model):
 
     def order_cost(self):
         return self.amount * self._price()
+
+    @property
+    def confirmed_amount(self):
+        return self._confirmed_amount or 0
+
+    @confirmed_amount.setter
+    def confirmed_amount(self, value):
+        self._confirmed_amount = value
 
     def confirmed_cost(self):
         return self.confirmed_amount * self._price()
