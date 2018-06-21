@@ -1,7 +1,7 @@
 import datetime
 
-from django.http import Http404
-from django.utils.translation import gettext as _
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.generic import DetailView, CreateView, UpdateView
 
 import products.models
@@ -88,7 +88,7 @@ class OrderCreateView(OrderMixin, CreateView):
         for i in range(len(orders)):
             for field, value in orders[i].items():
                 post_initial[form.formset[i].add_prefix(field)] = value
-        return super().get_context_data(post_initial=post_initial, form=form, **kwargs)
+        return super().get_context_data(post_initial=post_initial, **kwargs)
 
 
 class OrderEditView(OrderMixin, UpdateView):
