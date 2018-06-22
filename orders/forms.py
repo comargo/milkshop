@@ -105,6 +105,7 @@ class OrderForm(forms.ModelForm):
 
 class OrderConfirmForm(OrderForm):
     class Meta(OrderForm.Meta):
+        fields = []
         widgets = {'date': forms.HiddenInput}
 
     formset_class = OrderConfirmFormSet

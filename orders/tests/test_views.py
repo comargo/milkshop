@@ -291,7 +291,9 @@ class OrderConfirmViewTestCase(ViewTestCaseMixin, TestCase):
         response = self.get_response()
         form = response.context['form']
         self.assertIsInstance(form, forms.OrderForm)
-        self.assertEqual([], [field.name for field in response.context['form'].visible_fields()])
+        self.assertEqual([], [field.name for field in response.context['form']])
+
+    #        self.assertEqual([], [field.name for field in response.context['form'].visible_fields()])
 
     def test_context_objects(self):
         response = self.get_response()
@@ -301,7 +303,6 @@ class OrderConfirmViewTestCase(ViewTestCaseMixin, TestCase):
     def test_initial(self):
         response = self.get_response()
         form = response.context['form']
-        self.assertEqual({'date': date(2001, 1, 7)}, form.initial)
         self.assertEqual([{'customer': 1, 'order': 1, 'product-1-1': None, 'product-2-4': None},
                           {'customer': 2, 'order': 1, 'product-1-2': None, 'product-2-3': None}],
                          [form.initial for form in form.formset])
@@ -316,7 +317,6 @@ class OrderConfirmViewTestCase(ViewTestCaseMixin, TestCase):
         self.order.customers.get(pk=2).product_orders.update(confirmed_amount=1)
         response = self.get_response()
         form = response.context['form']
-        self.assertEqual({'date': date(2001, 1, 7)}, form.initial)
         self.assertEqual([{'customer': 1, 'order': 1, 'product-1-1': 0, 'product-2-4': None},
                           {'customer': 2, 'order': 1, 'product-1-2': 1, 'product-2-3': 1}],
                          [form.initial for form in form.formset])
