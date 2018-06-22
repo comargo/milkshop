@@ -69,7 +69,7 @@ class LastOrderView(OrderView):
 class OrderCreateView(OrderMixin, CreateView):
     form_class = forms.OrderForm
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, form=None, **kwargs):
         orders = []
         order_date = datetime.date.today()
         try:
@@ -84,13 +84,13 @@ class OrderCreateView(OrderMixin, CreateView):
         except Order.DoesNotExist:
             pass
 
-        form = kwargs.get('form', self.get_form())
+        form = form or self.get_form()
         form.formset.extra = len(orders) + 1
         post_initial = {form.add_prefix('date'): order_date + datetime.timedelta(days=7)}
         for i in range(len(orders)):
             for field, value in orders[i].items():
                 post_initial[form.formset[i].add_prefix(field)] = value
-        return super().get_context_data(post_initial=post_initial, **kwargs)
+        return super().get_context_data(post_initial=post_initial, form=form, **kwargs)
 
 
 class OrderEditView(OrderMixin, UpdateView):
@@ -101,8 +101,8 @@ class OrderConfirmView(OrderMixin, UpdateView):
     form_class = forms.OrderConfirmForm
     template_name_suffix = '_confirm_form'
 
-    def get_context_data(self, **kwargs):
-        form = kwargs.get('form', self.get_form())
+    def get_context_data(self, form=None, **kwargs):
+        form = form or self.get_form()
         post_initial = {}
         #        for fields in form.visible_fields():
         #            post_initial[]
