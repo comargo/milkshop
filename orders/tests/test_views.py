@@ -312,8 +312,8 @@ class OrderConfirmViewTestCase(ViewTestCaseMixin, TestCase):
                          response.context['post_initial'])
 
     def test_initial_second_confirm(self):
-        self.order.customers.get(pk=1).product_orders.filter(pk=1).update(_confirmed_amount=0)
-        self.order.customers.get(pk=2).product_orders.update(_confirmed_amount=1)
+        self.order.customers.get(pk=1).product_orders.filter(pk=1).update(confirmed_amount=0)
+        self.order.customers.get(pk=2).product_orders.update(confirmed_amount=1)
         response = self.get_response()
         form = response.context['form']
         self.assertEqual({'date': date(2001, 1, 7)}, form.initial)

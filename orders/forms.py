@@ -69,7 +69,7 @@ class CustomerOrderConfirmForm(CustomerOrderForm):
         if self.instance:
             initial = {}
             for product_order in self.instance.product_orders.all():
-                initial[product_order.product.get_field_name()] = product_order._confirmed_amount
+                initial[product_order.product.get_field_name()] = product_order.confirmed_amount
             return initial
         return None
 

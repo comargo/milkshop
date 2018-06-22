@@ -109,6 +109,6 @@ class OrderConfirmView(OrderMixin, UpdateView):
         for subform in form.formset.forms:
             customer = self.object.customers.get(customer_id=subform['customer'].value())
             for product_order in customer.product_orders.all():
-                if product_order.amount and product_order._confirmed_amount is None:
+                if product_order.amount and product_order.confirmed_amount is None:
                     post_initial[subform.add_prefix(product_order.product.get_field_name())] = product_order.amount
         return super().get_context_data(post_initial=post_initial, form=form, **kwargs)

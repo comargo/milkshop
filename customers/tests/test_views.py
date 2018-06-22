@@ -127,7 +127,7 @@ class DebitAddViewTestCase(ViewTestCaseMixin, TestCase):
         product = products.models.Product.objects.first()
         orders.models.Order.objects.create(date=date.today()) \
             .customers.create(customer=self.customer) \
-            .product_orders.create(product=product, amount=0, _confirmed_amount=1)
+            .product_orders.create(product=product, amount=0, confirmed_amount=1)
 
         response = self.get_response()
         self.assertEqual(['amount'], [field.name for field in response.context['form'].visible_fields()])
