@@ -12,6 +12,7 @@ order_urlpatterns = [
 
 urlpatterns = [
     path('', orders.views.LastOrderView.as_view(), name='index'),
+    path('list', orders.views.OrdersListView.as_view(), name='list'),
     path('create', orders.views.OrderCreateView.as_view(), name='create'),
     path('<int:order_pk>/', include(order_urlpatterns))
 ]

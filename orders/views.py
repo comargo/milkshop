@@ -2,7 +2,7 @@ import datetime
 
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import DetailView, CreateView, UpdateView
+from django.views.generic import DetailView, CreateView, UpdateView, ListView
 
 import products.models
 from orders import forms
@@ -14,6 +14,9 @@ class OrderMixin:
     model = Order
     pk_url_kwarg = 'order_pk'
 
+
+class OrdersListView(OrderMixin, ListView):
+    pass
 
 class OrderView(OrderMixin, DetailView):
     def get_context_data(self, **kwargs):

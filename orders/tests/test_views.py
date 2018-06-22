@@ -7,6 +7,22 @@ from helpers.tests.views_helper import ViewTestCaseMixin
 from orders import models, views, forms
 
 
+class OrdersListViewTestCase(ViewTestCaseMixin, TestCase):
+    fixtures = ['test_products', 'test_customers', 'test_orders']
+    view_class = views.OrdersListView
+    template_name = 'orders/order_list.html'
+
+    def get_response(self):
+        return self.client.get(reverse('orders:list'))
+
+    def test_context_lists(self):
+        response = self.get_response()
+        self.assertQuerysetEqual(models.Order.objects.all(), map(repr, response.context['object_list']),
+                                 ordered=False)
+        self.assertQuerysetEqual(models.Order.objects.all(), map(repr, response.context['order_list']),
+                                 ordered=False)
+
+
 class OrderViewTestCase(ViewTestCaseMixin, TestCase):
     fixtures = ['test_products', 'test_customers', 'test_orders']
     view_class = views.OrderView
