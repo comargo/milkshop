@@ -397,3 +397,22 @@ class OrderConfirmViewTestCase(ViewTestCaseMixin, TestCase):
         self.assertRedirects(response=response, expected_url=new_order.get_absolute_url())
         self.assertQuerysetEqual(new_order.customers.order_by('customer_id').all(), expected_data,
                                  tranform_customer_order)
+
+
+class OrderDeleteViewTestCase(ViewTestCaseMixin, TestCase):
+    fixtures = ['test_products', 'test_customers', 'test_orders']
+    view_class = views.OrderDeleteView
+    template_name = 'orders/order_confirm_delete.html'
+
+    def setUp(self):
+        super().setUp()
+        self.order = models.Order.objects.first()
+        self.url = self.order.get_delete_url()
+
+    def get_response(self):
+        return self.client.get(self.url)
+
+    def test_confirm_delete(self):
+        response = self.client.post(self.url)
+        self.assertRedirects(response, reverse('orders:list'))
+        self.assertQuerysetEqual(models.Order.objects.all(), [])

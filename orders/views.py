@@ -1,8 +1,8 @@
 import datetime
 
 from django.shortcuts import redirect
-from django.urls import reverse
-from django.views.generic import DetailView, CreateView, UpdateView, ListView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import DetailView, CreateView, UpdateView, ListView, DeleteView
 
 import products.models
 from orders import forms
@@ -115,3 +115,7 @@ class OrderConfirmView(OrderMixin, UpdateView):
                 if product_order.amount and product_order.confirmed_amount is None:
                     post_initial[subform.add_prefix(product_order.product.get_field_name())] = product_order.amount
         return super().get_context_data(post_initial=post_initial, form=form, **kwargs)
+
+
+class OrderDeleteView(OrderMixin, DeleteView):
+    success_url = reverse_lazy('orders:list')

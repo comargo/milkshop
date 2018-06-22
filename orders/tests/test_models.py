@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 from django.test import TestCase
-from django.urls import NoReverseMatch, reverse
+from django.urls import reverse
 
 import customers.models
 import orders.models
@@ -41,8 +41,8 @@ class OrderTestCase(TestCase):
                          test_order.get_absolute_url())
         self.assertEqual(reverse("orders:order-edit", kwargs=kwargs),
                          test_order.get_absolute_url("edit"))
-        self.assertRaisesMessage(NoReverseMatch, "order-delete",
-                                 test_order.get_absolute_url, "delete")
+        self.assertEqual(reverse("orders:order-delete", kwargs=kwargs),
+                         test_order.get_absolute_url("delete"))
 
     def test_get_edit_url(self):
         test_order = self._test_order()
@@ -51,7 +51,8 @@ class OrderTestCase(TestCase):
 
     def test_get_delete_url(self):
         test_order = self._test_order()
-        self.assertRaisesMessage(NoReverseMatch, "order-delete", test_order.get_delete_url)
+        self.assertEqual(reverse("orders:order-delete", kwargs={"order_pk": test_order.pk}),
+                         test_order.get_delete_url())
 
 
 class CustomerOrderTestCase(TestCase):

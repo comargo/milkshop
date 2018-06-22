@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+Заказы - удаление заказа
+{% endblock %}
+
+{% block content %}
+<form method="post" role="form">
+    {% csrf_token %}
+    <p>Вы уверены что хотите удалить заказ <strong>{{ order }}</strong></p>
+    {% buttons submit='OK' %}
+    {% endbuttons %}
+</form>
+{% endblock %}
