@@ -2,10 +2,17 @@
 {% load helpers %}
 
 {% block content %}
-<h2>{{ order }}
-    <a href="{{ order.get_edit_url }}" title="Редактировать"><i class="fas fa-edit">&#xf044;</i></a>
-    <a href="{{ order.get_confirm_url }}" title="Подтвердить"><i class="far fa-check-square">&#xf14a;</i></a>
-    <a href="{% url 'orders:create' %}" title="Новый заказ"><i class="fas fa-plus">&#xf067;</i></a>
+<h2>
+    <div class="float-left">{{ order }}
+        <a href="{{ order.get_edit_url }}" title="Редактировать"><i class="fas fa-edit">&#xf044;</i></a>
+        <a href="{{ order.get_confirm_url }}" title="Подтвердить"><i class="far fa-check-square">&#xf14a;</i></a>
+        <a href="{% url 'orders:create' %}" title="Новый заказ"><i class="fas fa-plus">&#xf067;</i></a>
+        <a href="{{ order.get_delete_url }}" title="Удалить" class="text-danger"><i
+                class="fas fa-minus">&#xf068;</i></a>
+    </div>
+    <div class="float-right">
+        <a href="{% url 'orders:list' %}" title="Список"><i class="far fa-list-alt">&#xf022;</i></a>
+    </div>
 </h2>
 <hr/>
 <div class="table-responsive">
