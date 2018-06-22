@@ -27,7 +27,7 @@
             <td class="text-center">
                 {% with amount_pair=customer_order|key:header.0 %}
                 {{ amount_pair.amount | default:"-" }}
-                ( {{ amount_pair.confirmed | default:"-" }} )
+                ( {{ amount_pair.confirmed | default_if_none:"-"}} )
                 {% endwith %}
             </td>
             {% endif %}

@@ -30,7 +30,7 @@ class OrderView(OrderMixin, DetailView):
                 try:
                     product_order = customer.product_orders.get(product=product)
                     amount = {'amount': product_order.amount or None,
-                              'confirmed': product_order.confirmed_amount or None}
+                              'confirmed': product_order.confirmed_amount}
                 except customer.product_orders.model.DoesNotExist:
                     amount = {'amount': None,
                               'confirmed': None}

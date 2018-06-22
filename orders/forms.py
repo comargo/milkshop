@@ -48,7 +48,7 @@ class CustomerOrderForm(forms.ModelForm):
             else:
                 try:
                     product_order = self.instance.product_orders.get(product=product)
-                    setattr(product_order, self.amount_field, 0)
+                    setattr(product_order, self.amount_field, value)
                     product_order.save()
                 except self.instance.product_orders.model.DoesNotExist:
                     pass
