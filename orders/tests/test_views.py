@@ -50,6 +50,23 @@ class OrderViewTestCase(ViewTestCaseMixin, TestCase):
              '4': {'amount': 1, 'confirmed': 0}
              }, response.context['order_table_footer'])
 
+    def test_context_objects_partial_confirmed(self):
+        self.order.customers.get(customer_id=1).product_orders.filter(product_id=1).update(confirmed_amount=0)
+        self.order.customers.get(customer_id=2).product_orders.update(confirmed_amount=2)
+        response = self.get_response()
+        self.assertEqual(
+            [{'customer': 'user1',
+              '1': {'amount': 1, 'confirmed': 0},
+              '2': {'amount': None, 'confirmed': None},
+              '3': {'amount': None, 'confirmed': None},
+              '4': {'amount': 1, 'confirmed': None}},
+             {'customer': 'user2',
+              '1': {'amount': None, 'confirmed': None},
+              '2': {'amount': 2, 'confirmed': 2},
+              '3': {'amount': 2, 'confirmed': 2},
+              '4': {'amount': None, 'confirmed': None}}]
+            , response.context['order_table'])
+
 
 class LastOrderViewTestCase(ViewTestCaseMixin, TestCase):
     fixtures = ['test_products', 'test_customers']
@@ -322,3 +339,45 @@ class OrderConfirmViewTestCase(ViewTestCaseMixin, TestCase):
                          [form.initial for form in form.formset])
         self.assertEqual({'customers-0-product-2-4': 1},
                          response.context['post_initial'])
+
+    def test_post_partial(self):
+        data = {
+            'customers-TOTAL_FORMS': '2',
+            'customers-INITIAL_FORMS': '2',
+            'customers-0-customer': '1',
+            'customers-0-id': '1',
+            'customers-0-order': '1',
+            'customers-0-product-1-1': '0',
+            'customers-0-product-1-2': '',
+            'customers-0-product-2-3': '',
+            'customers-0-product-2-4': '',
+            'customers-1-customer': '2',
+            'customers-1-id': '2',
+            'customers-1-order': '1',
+            'customers-1-product-1-1': '',
+            'customers-1-product-1-2': '2',
+            'customers-1-product-2-3': '2',
+            'customers-1-product-2-4': '',
+        }
+        expected_data = [
+            [
+                {'product_id': 1, 'confirmed_amount': 0},
+                {'product_id': 4, 'confirmed_amount': None}
+            ],
+            [
+                {'product_id': 2, 'confirmed_amount': 2},
+                {'product_id': 3, 'confirmed_amount': 2}
+            ]
+        ]
+
+        def tranform_product_order(product_order):
+            return {'product_id': product_order.product.id, 'confirmed_amount': product_order.confirmed_amount}
+
+        def tranform_customer_order(customer_order):
+            return list(map(tranform_product_order, customer_order.product_orders.order_by('product_id').all()))
+
+        response = self.client.post(self.url, data=data)
+        new_order = models.Order.objects.get(pk=self.order.pk)
+        self.assertRedirects(response=response, expected_url=new_order.get_absolute_url())
+        self.assertQuerysetEqual(new_order.customers.order_by('customer_id').all(), expected_data,
+                                 tranform_customer_order)
