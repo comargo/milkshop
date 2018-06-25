@@ -60,7 +60,7 @@
         </tfoot>
     </table>
     <p>Предварительная сумма заказа <span class="font-weight-bold">{{ order.order_cost }}.00 &#8381;</span></p>
-    <form action="sms:{{order_phone}}" method="get">
+    <form action="#" id="message_form">
         <h5>СМС</h5>
         <div class="input-group">
             <textarea class="form-control" id="message" name="body">Добрый день. На этой неделе {% for product_type_message in order_message %}{{ product_type_message.0 | lower }}:{% for product_message in product_type_message.1 %}{{ product_message.1 }}{% if product_message.0.name %}x{{ product_message.0.name }}{% endif %}, {% endfor %}{%endfor%}</textarea>
@@ -68,4 +68,17 @@
         <input class="btn btn-primary" type="submit" value="Отправить">
     </form>
 </div>
+{% endblock %}
+
+{% block bootstrap4_extra_script %}
+{{ block.super }}
+<script>
+    var el = document.getElementById('message_form');
+    el.addEventListener('submit', function(){
+        window.open('sms:{{order_phone}}?body='+document.getElementById('message').value);
+        return true;
+    })
+
+
+</script>
 {% endblock %}
