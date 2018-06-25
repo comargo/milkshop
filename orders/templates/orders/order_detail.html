@@ -69,14 +69,3 @@
     </form>
 </div>
 {% endblock %}
-
-{% block bootstrap4_extra_script %}
-{{ block.super }}
-<script>
-    var el = document.getElementById('send_message');
-    el.addEventListener('click', function(){
-        var msg = document.getElementById('message')
-    })
-
-</script>
-{% endblock %}
