@@ -3,6 +3,8 @@ from datetime import date, timedelta
 from django.test import TestCase
 from django.urls import reverse, reverse_lazy
 
+import customers.models
+import products.models
 from helpers.tests.views_helper import ViewTestCaseMixin
 from orders import models, views, forms
 
@@ -41,10 +43,10 @@ class OrderViewTestCase(ViewTestCaseMixin, TestCase):
         self.assertEqual(self.order, response.context['order'])
         self.assertEqual(
             [('customer', 'Заказчик'),
-             ('1', 'type1 product1'),
-             ('2', 'type1 product2'),
-             ('3', 'type2 product3'),
-             ('4', 'type2 product4')]
+             ('1', 'type1 product1', products.models.Product.objects.get(pk=1)),
+             ('2', 'type1 product2', products.models.Product.objects.get(pk=2)),
+             ('3', 'type2 product3', products.models.Product.objects.get(pk=3)),
+             ('4', 'type2 product4', products.models.Product.objects.get(pk=4))]
             , response.context['order_table_header'])
         self.assertEqual(
             [{'1': {'amount': 1, 'confirmed': None},
@@ -65,6 +67,27 @@ class OrderViewTestCase(ViewTestCaseMixin, TestCase):
              '3': {'amount': 2, 'confirmed': 0},
              '4': {'amount': 1, 'confirmed': 0}
              }, response.context['order_table_footer'])
+        self.assertEqual([
+            (products.models.ProductType.objects.get(pk=1), [
+                (products.models.Product.objects.get(pk=1), 1),
+                (products.models.Product.objects.get(pk=2), 2),
+            ]),
+            (products.models.ProductType.objects.get(pk=2), [
+                (products.models.Product.objects.get(pk=3), 2),
+                (products.models.Product.objects.get(pk=4), 1),
+            ])
+        ], response.context['order_message'])
+
+    def test_order_message_context_object(self):
+        order = models.Order.objects.create(date=date.today())
+        customer_order = order.customers.create(customer=customers.models.Customer.objects.first())
+        customer_order.product_orders.create(product=products.models.Product.objects.get(pk=2), amount=1)
+        response = self.client.get(order.get_absolute_url())
+        self.assertEqual([
+            (products.models.ProductType.objects.get(pk=1), [
+                (products.models.Product.objects.get(pk=2), 1),
+            ])
+        ], response.context['order_message'])
 
     def test_context_objects_partial_confirmed(self):
         self.order.customers.get(customer_id=1).product_orders.filter(product_id=1).update(confirmed_amount=0)

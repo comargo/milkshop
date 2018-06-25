@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DetailView, CreateView, UpdateView, ListView, DeleteView
@@ -18,12 +19,13 @@ class OrderMixin:
 class OrdersListView(OrderMixin, ListView):
     pass
 
+
 class OrderView(OrderMixin, DetailView):
     def get_context_data(self, **kwargs):
         order = self.object
         order_table_header = [('customer', 'Заказчик')]
         order_table_header.extend(
-            [(str(product.pk), str(product)) for product in products.models.Product.objects.all()]
+            [(str(product.pk), str(product), product) for product in products.models.Product.objects.all()]
         )
 
         order_table = []
@@ -39,7 +41,22 @@ class OrderView(OrderMixin, DetailView):
                               'confirmed': None}
                 customer_order[str(product.pk)] = amount
             order_table.append(customer_order)
+
         order_table_footer = {'customer': 'Итого'}
+        order_message = []
+        for product_type in products.models.ProductType.objects.all():
+            product_type_message = []
+            for product in product_type.products.all():
+                order_table_footer[str(product.pk)] = {
+                    'amount': sum(customer_order[str(product.pk)]['amount'] or 0 for customer_order in order_table),
+                    'confirmed': sum(
+                        customer_order[str(product.pk)]['confirmed'] or 0 for customer_order in order_table),
+                }
+                if order_table_footer[str(product.pk)]['amount']:
+                    product_type_message.append((product, order_table_footer[str(product.pk)]['amount']))
+            if len(product_type_message):
+                order_message.append((product_type, product_type_message))
+
         for product in products.models.Product.objects.all():
             order_table_footer[str(product.pk)] = {
                 'amount': sum(customer_order[str(product.pk)]['amount'] or 0 for customer_order in order_table),
@@ -49,7 +66,9 @@ class OrderView(OrderMixin, DetailView):
         context = {
             'order_table_header': order_table_header,
             'order_table': order_table,
-            'order_table_footer': order_table_footer
+            'order_table_footer': order_table_footer,
+            'order_message': order_message,
+            'order_phone': settings.ORDER_PHONE
         }
         context.update(kwargs)
         return super().get_context_data(**context)

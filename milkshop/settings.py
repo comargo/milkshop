@@ -138,4 +138,6 @@ PROJECT = {
     }
 }
 
+ORDER_PHONE = os.environ.get('MILKSHOP_ORDER_PHONE', os.environ.get('ORDER_PHONE'))
+
 django_heroku.settings(locals())
