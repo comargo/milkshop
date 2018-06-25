@@ -63,7 +63,7 @@
     <form action="#" id="message_form">
         <h5>СМС</h5>
         <div class="input-group">
-            <textarea class="form-control" id="message" name="body">Добрый день. На этой неделе {% for product_type_message in order_message %}{{ product_type_message.0 | lower }}:{% for product_message in product_type_message.1 %}{{ product_message.1 }}{% if product_message.0.name %}x{{ product_message.0.name }}{% endif %}, {% endfor %}{%endfor%}</textarea>
+            <textarea class="form-control" id="message" name="body">Добрый день. На этой неделе {% for product_type_message in order_message %}{{ product_type_message.0 | lower }}:{% for product_message in product_type_message.1 %}{{ product_message.1 }}{% if product_message.0.name %}*{{ product_message.0.name }}{% endif %}, {% endfor %}{%endfor%}</textarea>
         </div>
         <input class="btn btn-primary" type="submit" value="Отправить">
     </form>
