@@ -74,9 +74,10 @@
 {{ block.super }}
 <script>
     var el = document.getElementById('message_form');
-    el.addEventListener('submit', function(){
+    el.addEventListener('submit', function(event){
         window.open('sms:{{order_phone}}?body='+document.getElementById('message').value);
-        return true;
+        event.preventDefault();
+        return false;
     })
 
 
