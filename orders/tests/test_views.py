@@ -324,6 +324,39 @@ class OrderEditViewTestCase(ViewTestCaseMixin, TestCase):
                                  product_order_translate)
         self.assertRedirects(response=response, expected_url=new_order.get_absolute_url())
 
+    def test_delete_empty_order(self):
+        response = self.client.post(self.url, {
+            'date': date.today(),
+            'customers-TOTAL_FORMS': 2,
+            'customers-INITIAL_FORMS': 2,
+            'customers-0-customer': 1,
+            'customers-0-id': 1,
+            'customers-0-product-1-1': '',
+            'customers-0-product-2-4': '',
+            'customers-1-customer': 2,
+            'customers-1-id': 2,
+            'customers-1-product-1-1': 1,
+            'customers-1-product-1-2': 1,
+            'customers-1-product-2-3': 1,
+            'customers-1-product-2-4': 1,
+        })
+        new_order = models.Order.objects.get(date=date.today())
+        order_list = [order_translate(new_order)]
+        self.assertQuerysetEqual(models.Order.objects.all(), order_list, order_translate)
+        customer_order_list = [
+            {'pk': 2, 'order.pk': 1, 'customer.pk': 2}]
+        self.assertQuerysetEqual(models.CustomerOrder.objects.all().order_by('pk'), customer_order_list,
+                                 customer_order_translate)
+        product_order_list = [
+            {'pk': 3, 'customerOrder.pk': 2, 'product.pk': 2},
+            {'pk': 4, 'customerOrder.pk': 2, 'product.pk': 3},
+            {'pk': 5, 'customerOrder.pk': 2, 'product.pk': 1},
+            {'pk': 6, 'customerOrder.pk': 2, 'product.pk': 4}]
+
+        self.assertQuerysetEqual(models.ProductOrder.objects.all().order_by('pk'), product_order_list,
+                                 product_order_translate)
+        self.assertRedirects(response=response, expected_url=new_order.get_absolute_url())
+
 
 class OrderConfirmViewTestCase(ViewTestCaseMixin, TestCase):
     fixtures = ['test_products', 'test_customers', 'test_orders']

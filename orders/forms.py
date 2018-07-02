@@ -49,9 +49,15 @@ class CustomerOrderForm(forms.ModelForm):
                 try:
                     product_order = self.instance.product_orders.get(product=product)
                     setattr(product_order, self.amount_field, value)
-                    product_order.save()
+                    if product_order.amount is None and product_order.confirmed_amount is None:
+                        product_order.delete()
+                    else:
+                        product_order.save()
                 except self.instance.product_orders.model.DoesNotExist:
                     pass
+        if self.instance.product_orders.count() == 0:
+            self.instance.delete()
+            self.instance = None
         return self.instance
 
 
