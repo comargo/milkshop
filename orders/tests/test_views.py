@@ -9,6 +9,22 @@ from helpers.tests.views_helper import ViewTestCaseMixin
 from orders import models, views, forms
 
 
+def order_translate(order):
+    return {'pk': order.pk, 'date': order.date}
+
+
+def customer_order_translate(customer_order):
+    return {'pk': customer_order.pk,
+            'order.pk': customer_order.order.pk,
+            'customer.pk': customer_order.customer.pk}
+
+
+def product_order_translate(product_order):
+    return {'pk': product_order.pk,
+            'customerOrder.pk': product_order.customerOrder.pk,
+            'product.pk': product_order.product.pk}
+
+
 class OrdersListViewTestCase(ViewTestCaseMixin, TestCase):
     fixtures = ['test_products', 'test_customers', 'test_orders']
     view_class = views.OrdersListView
@@ -196,15 +212,6 @@ class OrderCreateViewTestCase(ViewTestCaseMixin, TestCase):
     def test_post_valid(self):
         self.load_fixture()
 
-        def order_translate(order):
-            return {'pk': order.pk, 'date': order.date}
-
-        def customer_order_translate(customer_order):
-            return f''''pk': {customer_order.pk}, 'order.pk': {customer_order.order.pk}, 'customer.pk': {customer_order.customer.pk}'''
-
-        def product_order_translate(product_order):
-            return f''''pk': {product_order.pk}, 'customerOrder.pk': {product_order.customerOrder.pk}, 'product.pk': {product_order.product.pk}'''
-
         order_list = list(map(order_translate, models.Order.objects.all()))
         customer_order_list = list(map(customer_order_translate, models.CustomerOrder.objects.all()))
         product_order_list = list(map(product_order_translate, models.ProductOrder.objects.all()))
@@ -227,10 +234,10 @@ class OrderCreateViewTestCase(ViewTestCaseMixin, TestCase):
              )
         ))
         self.assertQuerysetEqual(models.Order.objects.all(), order_list, order_translate)
-        self.assertQuerysetEqual(models.CustomerOrder.objects.all(), customer_order_list,
-                                 transform=customer_order_translate, ordered=False)
-        self.assertQuerysetEqual(models.ProductOrder.objects.all(), product_order_list,
-                                 transform=product_order_translate, ordered=False)
+        self.assertQuerysetEqual(models.CustomerOrder.objects.order_by('pk').all(), customer_order_list,
+                                 transform=customer_order_translate)
+        self.assertQuerysetEqual(models.ProductOrder.objects.order_by('pk').all(), product_order_list,
+                                 transform=product_order_translate)
         self.assertRedirects(response=response, expected_url=new_order.get_absolute_url())
 
 
@@ -282,19 +289,6 @@ class OrderEditViewTestCase(ViewTestCaseMixin, TestCase):
                                 errors='This field is required.')
 
     def test_post_valid(self):
-        def order_translate(order):
-            return {'pk': order.pk, 'date': order.date}
-
-        def customer_order_translate(customer_order):
-            return {'pk': customer_order.pk,
-                    'order.pk': customer_order.order.pk,
-                    'customer.pk': customer_order.customer.pk}
-
-        def product_order_translate(product_order):
-            return {'pk': product_order.pk,
-                    'customerOrder.pk': product_order.customerOrder.pk,
-                    'product.pk': product_order.product.pk}
-
         response = self.client.post(self.url, {
             'date': date.today(),
             'customers-TOTAL_FORMS': 2,
