@@ -39,5 +39,40 @@
 {% block bootstrap4_extra_script %}
 {{ block.super }}
 {% include 'orders/post-initial.html' with form_name='mainForm' %}
+<script>
+$(document).ready(function(){
+    var extra_line=`
+<tr>
+{% for field in form.formset.empty_form.visible_fields %}
+<td>
+    {% bootstrap_field field show_label=False %}
+    {% if forloop.first %}
+    {% for hidden_field in subform.hidden_fields %}
+    {% bootstrap_field hidden_field %}
+    {% endfor %}
+    {% endif %}
+</td>
+{% endfor %}
+</tr>
+`;
+
+    var form = document.getElementById('mainForm');
+    var $tbody = $('#mainForm table tbody');
+
+    function appendRow()
+    {
+        var lastId = Number.parseInt(form["customers-TOTAL_FORMS"].value);
+        var new_row = extra_line.replace(RegExp('__prefix__','g'),lastId);
+        $tbody.append(new_row);
+        form["customers-TOTAL_FORMS"].value = lastId+1;
+        $("#id_customers-" + lastId + "-customer").one("change", appendRow);
+    }
+
+    var lastId = form["customers-TOTAL_FORMS"].value-1;
+    $("#id_customers-" + lastId + "-customer").one("change", appendRow);
+})
+
+
+</script>
 {% endblock %}
 
