@@ -26,6 +26,22 @@ class OrderTestCase(TestCase):
         test_order = self._test_order()
         self.assertEqual(100 + 400 + 2 * 200 + 2 * 300, test_order.order_cost())
 
+    def test_confirmed_cost_empty(self):
+        test_order = self._new_order()
+        self.assertEqual(0, test_order.confirmed_cost())
+
+    def test_confirmed_cost_unconfirmed(self):
+        test_order = self._test_order()
+        self.assertEqual(0, test_order.confirmed_cost())
+
+    def test_confirmed_cost(self):
+        test_order = self._test_order()
+        for test_customer_order in test_order.customers.all():
+            for product_order in test_customer_order.product_orders.all():
+                product_order.confirmed_amount = product_order.amount
+                product_order.save()
+        self.assertEqual(test_order.order_cost(), test_order.confirmed_cost())
+
     def test_get_urlpattern(self):
         test_order = self._test_order()
         self.assertEqual('orders:order', test_order.get_urlpattern())

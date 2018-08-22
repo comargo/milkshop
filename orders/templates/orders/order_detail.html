@@ -60,6 +60,9 @@
         </tfoot>
     </table>
     <p>Предварительная сумма заказа <span class="font-weight-bold">{{ order.order_cost }}.00 &#8381;</span></p>
+    {% if order.confirmed_cost %}
+    <p>Окончательная сумма заказа <span class="font-weight-bold">{{ order.confirmed_cost }}.00 &#8381;</span></p>
+    {% endif %}
     <form action="#" id="message_form">
         <h5>СМС</h5>
         <div class="input-group">

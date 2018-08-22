@@ -15,6 +15,12 @@ class Order(helpers_models.BrowseableObjectModel):
             cost += customer.order_cost()
         return cost
 
+    def confirmed_cost(self):
+        cost = 0
+        for customer in self.customers.all():
+            cost += customer.confirmed_cost()
+        return cost
+
     def get_confirm_url(self):
         return self.get_absolute_url('confirm')
 
