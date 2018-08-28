@@ -8,10 +8,20 @@ invalid_string = "invalid_string"
 
 @override_settings(TEMPLATE_STRING_IF_INVALID=invalid_string)
 class HelpersTestCase(TestCase):
+    class TestClass:
+        a = "a_value"
+
+        def func_a(self):
+            return "func_a_value"
+
+        def func_multi(self, param):
+            return f'func_multi({param})'
+
     context = Context({
         "dict_value": {key: f'{key}_value' for key in ["a", "b"]},
         "list_value": [f'{key}_value' for key in range(2)],
         "tuple_value": tuple(f'{key}_value' for key in range(2)),
+        "class_value": TestClass(),
     })
 
     def test_key_dict_const_valid(self):
@@ -89,5 +99,63 @@ class HelpersTestCase(TestCase):
         template = Template(r"""{% load helpers %}{{ tuple_value | key:a }}""")
         context = copy(self.context)
         context["a"] = 3
+        rendered = template.render(context)
+        self.assertEqual(invalid_string, rendered)
+
+    def test_key_class_attr_const_valid(self):
+        template = Template(r"""{% load helpers %}{{ class_value | key:"a" }}""")
+        context = copy(self.context)
+        rendered = template.render(context)
+        self.assertEqual(context["class_value"].a, rendered)
+
+    def test_key_class_attr_const_invalid(self):
+        template = Template(r"""{% load helpers %}{{ class_value | key:"c" }}""")
+        context = copy(self.context)
+        rendered = template.render(context)
+        self.assertEqual(invalid_string, rendered)
+
+    def test_key_class_attr_var_valid(self):
+        template = Template(r"""{% load helpers %}{{ class_value | key:var }}""")
+        context = copy(self.context)
+        context["var"] = "a"
+        rendered = template.render(context)
+        self.assertEqual(context["class_value"].a, rendered)
+
+    def test_key_class_attr_var_invalid(self):
+        template = Template(r"""{% load helpers %}{{ class_value | key:var }}""")
+        context = copy(self.context)
+        context["var"] = "c"
+        rendered = template.render(context)
+        self.assertEqual(invalid_string, rendered)
+
+    def test_key_class_func_const_valid(self):
+        template = Template(r"""{% load helpers %}{{ class_value | key:"func_a" }}""")
+        context = copy(self.context)
+        rendered = template.render(context)
+        self.assertEqual(context["class_value"].func_a(), rendered)
+
+    def test_key_class_func_const_invalid(self):
+        template = Template(r"""{% load helpers %}{{ class_value | key:"func_c" }}""")
+        context = copy(self.context)
+        rendered = template.render(context)
+        self.assertEqual(invalid_string, rendered)
+
+    def test_key_class_func_const_multiparam_invalid(self):
+        template = Template(r"""{% load helpers %}{{ class_value | key:"func_multi" }}""")
+        context = copy(self.context)
+        rendered = template.render(context)
+        self.assertEqual(invalid_string, rendered)
+
+    def test_key_class_func_var_valid(self):
+        template = Template(r"""{% load helpers %}{{ class_value | key:var }}""")
+        context = copy(self.context)
+        context["var"] = "func_a"
+        rendered = template.render(context)
+        self.assertEqual(context["class_value"].func_a(), rendered)
+
+    def test_key_class_func_var_invalid(self):
+        template = Template(r"""{% load helpers %}{{ class_value | key:var }}""")
+        context = copy(self.context)
+        context["var"] = "func_c"
         rendered = template.render(context)
         self.assertEqual(invalid_string, rendered)

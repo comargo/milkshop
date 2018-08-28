@@ -10,8 +10,19 @@ def key(d, key_name):
     try:
         if isinstance(d, list) or isinstance(d, tuple):
             key_name = int(key_name)
-        value = d[key_name]
-    except (KeyError, IndexError):
+            value = d[key_name]
+        else:
+            attr = getattr(d, key_name, None)
+            if attr is not None:
+                if callable(attr):
+                    value = attr()
+                else:
+                    value = attr
+            else:
+                value = d[key_name]
+    except (KeyError, IndexError, TypeError) as e:
+        value = settings.TEMPLATE_STRING_IF_INVALID
+    except Exception as e:
         value = settings.TEMPLATE_STRING_IF_INVALID
 
     return value
