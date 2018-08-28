@@ -30,7 +30,7 @@ class OrderView(OrderMixin, DetailView):
 
         order_table = []
         for customer in order.customers.all():
-            customer_order = {'customer': str(customer.customer)}
+            customer_order = {'customer': customer.customer}
             for product in products.models.Product.objects.all():
                 try:
                     product_order = customer.product_orders.get(product=product)

@@ -69,12 +69,12 @@ class OrderViewTestCase(ViewTestCaseMixin, TestCase):
               '2': {'amount': None, 'confirmed': None},
               '3': {'amount': None, 'confirmed': None},
               '4': {'amount': 1, 'confirmed': None},
-              'customer': 'user1'},
+              'customer': customers.models.Customer.objects.get(pk=1)},
              {'1': {'amount': None, 'confirmed': None},
               '2': {'amount': 2, 'confirmed': None},
               '3': {'amount': 2, 'confirmed': None},
               '4': {'amount': None, 'confirmed': None},
-              'customer': 'user2'}]
+              'customer': customers.models.Customer.objects.get(pk=2)}]
             , response.context['order_table'])
         self.assertEqual(
             {'customer': 'Итого',
@@ -110,12 +110,12 @@ class OrderViewTestCase(ViewTestCaseMixin, TestCase):
         self.order.customers.get(customer_id=2).product_orders.update(confirmed_amount=2)
         response = self.get_response()
         self.assertEqual(
-            [{'customer': 'user1',
+            [{'customer': customers.models.Customer.objects.get(pk=1),
               '1': {'amount': 1, 'confirmed': 0},
               '2': {'amount': None, 'confirmed': None},
               '3': {'amount': None, 'confirmed': None},
               '4': {'amount': 1, 'confirmed': None}},
-             {'customer': 'user2',
+             {'customer': customers.models.Customer.objects.get(pk=2),
               '1': {'amount': None, 'confirmed': None},
               '2': {'amount': 2, 'confirmed': 2},
               '3': {'amount': 2, 'confirmed': 2},
