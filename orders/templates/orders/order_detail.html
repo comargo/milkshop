@@ -29,8 +29,7 @@
         <tr>
             {% for header in order_table_header %}
             {% if forloop.first %}
-            <th><a href="{{ customer_order | key:header.0 | key:" get_absolute_url" }}">{{ customer_order | key:header.0
-                }}</a></th>
+            <th><a href="{{ customer_order | key:header.0 | key:"get_absolute_url" }}">{{ customer_order | key:header.0 }}</a></th>
             {% else %}
             <td class="text-center">
                 {% with amount_pair=customer_order|key:header.0 %}
