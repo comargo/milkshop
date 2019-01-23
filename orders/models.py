@@ -54,7 +54,7 @@ class ProductOrder(models.Model):
     customerOrder = models.ForeignKey(to=CustomerOrder, on_delete=models.CASCADE, related_name='product_orders')
     product = models.ForeignKey(to=products.models.Product, on_delete=models.CASCADE,
                                 verbose_name="Продукция", related_name='+')
-    amount = models.PositiveSmallIntegerField(verbose_name="Количество")
+    amount = models.PositiveSmallIntegerField(verbose_name="Количество", null=True)
     confirmed_amount = models.PositiveSmallIntegerField(verbose_name="Подтвержденное количество", null=True)
 
     def __str__(self):
@@ -69,7 +69,7 @@ class ProductOrder(models.Model):
         return price_obj.price
 
     def order_cost(self):
-        return self.amount * self._price()
+        return (self.amount or 0) * self._price()
 
     def confirmed_cost(self):
         return (self.confirmed_amount or 0) * self._price()
