@@ -1,5 +1,5 @@
 django
-git+https://github.com/comargo/django-bootstrap4.git#egg=django-bootstrap4
+#git+https://github.com/comargo/django-bootstrap4.git#egg=django-bootstrap4
 django-heroku
 gunicorn
-#django-bootstrap4
+django-bootstrap4
